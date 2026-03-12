@@ -64,6 +64,11 @@ void RoundTracker::addScore(int amount) {
 	relics.triggerOnDamageDealt(amount, *this);
 	currentScore += amount;
 }
+
+void RoundTracker::addScoreToTarget(int amount) {
+//	relics.triggerOnDamageDealt(amount, *this);
+	targetScore+= amount;
+}
 void RoundTracker::addMana(int r, int b, int g) {
 	relics.triggerOnManaAdded(r, b, g, *this);
 	manaPool.addMana(r, b, g);

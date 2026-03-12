@@ -31,7 +31,10 @@ int View::readInt(int l, int h) {
 	}
 	return value;
 }
+void View::loseTheGame(){
 
+	
+}
 
 void View::showMainMenu(GameState& state, ActiveRun& activeRun) {
 	printSeparator("MAIN MENU");

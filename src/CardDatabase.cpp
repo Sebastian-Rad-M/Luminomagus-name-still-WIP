@@ -2,6 +2,16 @@
 #include "Effect.h"
 #include "RNG.h"
 
+int CardDatabase::readInt(int l, int h) {
+	int value;
+	while (!(std::cin >> value) || value < l || value > h) {
+		std::cin.clear();
+		std::cin.ignore(10000, '\n');
+		std::cout << "  Please enter a number between " << l << " and " << h << ": ";
+	}
+	return value;
+}
+
 CardDatabase& CardDatabase::getInstance() {
 	static CardDatabase instance;
 	return instance;
@@ -10,8 +20,11 @@ CardDatabase& CardDatabase::getInstance() {
 CardDatabase::CardDatabase() { loadAllCards(); }
 
 void CardDatabase::loadAllCards() {
-	// --- STARTER CARDS ---
-	// name, genericCost, redCost, blueCost, greenCost, rarity
+	//remember: View.readint
+	/*i am hardcoding for the moment... or at lease partially hardcoding them, building enough classes to be able to make it fully modular is not in my cards
+	*/
+
+	//   [name  ]("name ",generic,red,blue green,rarity) 
 	Card basicRed("Basic Red", 0, 0, 0, 0, 'B');
 	basicRed.addEffect(std::make_unique<ConditionalEffect>([](const RoundTracker& state) {return state.getStormCount() < 3;}, std::make_unique<AddManaEffect>(1, 0, 0)));
 	library["c_basic_red"] = basicRed;
@@ -25,44 +38,157 @@ void CardDatabase::loadAllCards() {
 	library["c_basic_green"] = basicGreen;
 
 	// --- COMMON CARDS ---
+	//Probe into nothingness
+	//cost 0: draw 1,increase score requiremnent by 2
 	Card gitaxianProbe("Gitaxian Probe", 0, 0, 0, 0, 'C');
 	gitaxianProbe.addEffect(std::make_unique<DrawCardEffect>(1));
+	gitaxianProbe.addEffect(std::make_unique<LambdaEffect>([](RoundTracker& state) 
+	{state.addScoreToTarget(2);}));
 	library["c_gitaxian_probe"] = gitaxianProbe;
+	//Weight the Past
+	// cost B:draw 1+1*nr of weigh the past in gy
+	Card weightThePast("Weight the Past", 0, 0, 1, 0, 'C');
+	weightThePast.addEffect(std::make_unique<DrawCardEffect>(1));
+	weightThePast.addEffect(std::make_unique<GraveyardScaleEffect>(
+		"Weight the Past", std::make_unique<DrawCardEffect>(1)));
+	library["c_weightThePast"] = weightThePast;
+	//rite of flame....
+	Card kindle("Kindle", 0, 1, 0, 0, 'C');
+	kindle.addEffect(std::make_unique<AddManaEffect>(2, 0, 0));
+	kindle.addEffect(std::make_unique<GraveyardScaleEffect>(
+		"Kindle", std::make_unique<AddManaEffect>(1, 0, 0)));
+	library["c_kindle"] = kindle;
+	
+	//discern from darkness
+	// look at the top 2+2*x cards, keep 1+1*x on top,rest GY. X=(nr of discern from darkness in gy)
+		//i cant figure out for the life of me how to use gyscale, f the guy who wrote the cards
+	Card discernFromDarkness("Discern from Darkness", 0, 0, 0, 1, 'C'); 
+	discernFromDarkness.addEffect(std::make_unique<LambdaEffect>([](RoundTracker& state) {
+        auto& deck = state.getDeck();
+        auto& grave = state.getGraveyard();
+        int x=1;
+		for (const auto& card : grave.getCards()) if (card->getName() == "Discern from Darkness") x++;
+        std::cout<<"  [!] Found "<<x<<" copies in GY. Looking at "<<2*x<<", keeping "<<x<<".\n";
+        std::vector<std::shared_ptr<Card>> revealed;
+        int actualLook = std::min(2*x, (int)deck.getCards().size());
+        if (actualLook == 0)  return;
+   		 for (int i = 0; i < actualLook; i++)  revealed.push_back(deck.popTopCard());
+        std::vector<std::shared_ptr<Card>> keptCards;
+        int actualKeep = std::min(x, (int)revealed.size());
+        for (int p = 0; p < actualKeep; p++) {
+            std::cout << "\n  --- DISCERN FROM DARKNESS (Keeping " << (p + 1) << " of " << actualKeep << ") ---\n";
+            for (size_t i = 0; i < revealed.size(); i++) std::cout << "  [" << (i + 1) << "] " << revealed[i]->getName() << "\n";
+            int index =readInt(1, revealed.size()) - 1;
+            keptCards.push_back(revealed[index]);
+            revealed.erase(revealed.begin() + index); }
+        for (int i = keptCards.size() - 1; i >= 0; i--)  deck.addCard(keptCards[i]); 
+        if (!revealed.empty()) for (auto& leftover : revealed)  grave.addCard(leftover);
+            }));
+	library["c_discern_from_darkness"] = discernFromDarkness;
+		//grapeshot but 5
+	Card fiatLux("Fiat Lux", 0, 1, 0, 0, 'C');
+	fiatLux.addEffect(std::make_unique<Score>(5));
+	fiatLux.addEffect(std::make_unique<StormEffect>(std::make_unique<Score>(5)));
+	library["c_fiatLux"] = fiatLux;
 
-	Card divination("Divination", 1, 0, 1, 0, 'C');
-	divination.addEffect(std::make_unique<DrawCardEffect>(2));
-	library["c_divination"] = divination;
- 
-	Card grapeshot("Grapeshot", 0, 1, 0, 0, 'C');
-	grapeshot.addEffect(std::make_unique<Score>(5));
-	grapeshot.addEffect(std::make_unique<StormEffect>(std::make_unique<Score>(5)));
-	library["c_grapeshot"] = grapeshot;
-
-	Card riteOfFlame("Rite of Flame", 0, 1, 0, 0, 'C');
-	riteOfFlame.addEffect(std::make_unique<AddManaEffect>(2, 0, 0));
-	riteOfFlame.addEffect(std::make_unique<GraveyardScaleEffect>(
-		"Rite of Flame", std::make_unique<AddManaEffect>(1, 0, 0)));
-	library["c_rite_of_flame"] = riteOfFlame;
-
-	Card lightingBolt("Lightning Bolt", 0, 1, 0, 0, 'C');
+		// its a pun, bolt but 10
+	Card lightingBolt("Lighting Bolt", 0, 1, 0, 0, 'C');
 	lightingBolt.addEffect(std::make_unique<Score>(10));
-	library["c_lighting_bolt"] = lightingBolt;
+	library["c_lightingBolt"] = lightingBolt;
+	
+	Card refract("Refract", 1, 1, 0, 0, 'C');
+	refract.addEffect(std::make_unique<DrawCardEffect>(1));
+	refract.addEffect(std::make_unique<AddManaEffect>(0, 0, 0, 2));
+	library["c_refract"] = refract;  
 
-	Card franticSearch("Frantic_Search", 2, 0, 1, 0, 'C');
-	franticSearch.addEffect(std::make_unique<DrawCardEffect>(2));
-	franticSearch.addEffect(std::make_unique<AddManaEffect>(1, 1, 1));
-	franticSearch.addEffect(std::make_unique<DiscardEffect>(2));
-	library["c_frantic_search"] = franticSearch;
-
-	Card manamorphose("Manamorphose", 1, 1, 0, 0, 'C');
-	manamorphose.addEffect(std::make_unique<DrawCardEffect>(1));
-	manamorphose.addEffect(std::make_unique<AddManaEffect>(0, 0, 0, 2));
-	library["c_manamorphose"] = manamorphose;  // maybe make it an uncommon and get of any color?
+	Card appelDuVide("L'Appel du Vide", 0, 1, 0, 0, 'C'); 
+	appelDuVide.addEffect(std::make_unique<AddManaEffect>(3, 0, 0));
+	appelDuVide.addEffect(std::make_unique<DiscardEffect>(1));
+	library["c_appel_du_vide"] = std::move(appelDuVide);
+	
 	// Uncommons
-	Card overcharge("Overcharge", 0, 1, 1, 0, 'U');
-	overcharge.addEffect(
+	Card dispersion("Dispersion", 2, 0, 1, 0, 'C');
+	dispersion.addEffect(std::make_unique<DrawCardEffect>(2));
+	dispersion.addEffect(std::make_unique<AddManaEffect>(1, 1, 1));
+	dispersion.addEffect(std::make_unique<DiscardEffect>(2));
+	library["c_dispersion"] =dispersion;
+	
+	Card siftTheScrolls("Sift the scrolls", 0, 0, 1, 0, 'C');
+	siftTheScrolls.addEffect(std::make_unique<DrawCardEffect>(2));
+	siftTheScrolls.addEffect(std::make_unique<DiscardEffect>(2));
+	library["c_siftTheScrolls"] =siftTheScrolls;
+	
+	Card interfereWithThePattern("Interfere with the pattern", 0, 0, 1, 1, 'U'); 
+	interfereWithThePattern.addEffect(std::make_unique<LambdaEffect>(
+    [](RoundTracker& state) {
+        std::cout << "\n  --- INTERFERE WITH THE PATTERN ---\n"<< "  [1] Deck\n"<< "  [2] Hand\n"<< "  [3] Graveyard\n"<< "  [4] Exile\n" << "  Select a zone to shuffle:";
+        int choice = readInt(1, 4);
+        switch(choice) {
+            case 1: 
+                state.getDeck().shuffle(); 
+                std::cout << "  --> Deck shuffled.\n"; 
+                break;
+            case 2: 
+                state.getHand().shuffle(); 
+                std::cout << "  --> Hand shuffled? what are you doing man\n"; 
+                break;
+            case 3: 
+                state.getGraveyard().shuffle(); 
+                std::cout << "  --> Graveyard shuffled.\n"; 
+                break;
+            case 4: 
+                state.getExile().shuffle(); 
+                std::cout << "  --> Exile shuffled.\n"; 
+                break;
+        }
+    }
+));
+interfereWithThePattern.addEffect(std::make_unique<DrawCardEffect>(1)); 
+
+library["c_interfere_with_the_pattern"] = std::move(interfereWithThePattern);
+	
+	Card reflect("Reflect", 0, 1, 1, 0, 'U');
+	reflect.addEffect(
 		std::make_unique<ApplyStatusEffect>(std::make_unique<OverchargeStatus>(1)));
-	library["c_overcharge"] = overcharge;
+	library["c_reflect"] = reflect;
+// 3 Generic, 1 Green, 1 Blue, Uncommon. 
+// (Adjust the cost arguments to match your exact Card constructor order!)
+Card adNauseum("Ad nauseum", 2, 0, 1, 1,'U'); 
+
+adNauseum.addEffect(std::make_unique<LambdaEffect>([](RoundTracker& state) {
+		auto& deck = state.getDeck();auto& hand = state.getHand();int totalCostRevealed = 0;
+        std::cout << "\n  --- AD NAUSEUM ---\n";
+        while (true) {
+            if (deck.getCards().empty())  break;
+            auto topCard = deck.popTopCard();
+            int cardCost = topCard->totalCost(); 
+            totalCostRevealed += cardCost;
+            hand.addCard(topCard);
+
+            std::cout << "  --> Revealed: " << topCard->getName() 
+                      << " (Cost: " << cardCost << "). Total so far: " 
+                      << totalCostRevealed << "/13\n";
+
+            if (totalCostRevealed > 13) {
+                std::cout << "  [!!!] Total cost exceeded 13 (" << totalCostRevealed << "). YOU LOSE.\n";
+                state.addScoreToTarget(9999); 
+				std::cout << "Please concede here";
+				//TODO: make an actual lose the game func
+                break;
+            }
+			std::cout << "\n  [1] Reveal another card\n";
+            std::cout << "  [2] Stop here\n";
+            int choice = readInt(1, 2);
+            if (choice == 2) {
+                std::cout << "  --> You stepped back from the brink. Ad Nauseum ends.\n";
+                break;
+            }
+        }
+    }
+));
+
+library["c_ad_nauseum"] = std::move(adNauseum);
+
 
 	// Rares and Legendaries
 	Card ancestralRecall("Ancestral Recall", 0, 0, 1, 0, 'R');
@@ -137,7 +263,8 @@ void CardDatabase::loadAllCards() {
 ));
 
 library["c_memory_dredge"] = std::move(memoryDredge);
-	Card blackLotus("Black Lotus", 0, 0, 0, 0, 'L');
+	
+Card blackLotus("Black Lotus", 0, 0, 0, 0, 'L');
 	blackLotus.addEffect(std::make_unique<AddManaEffect>(3, 3, 3));
 	library["c_black_lotus"] = blackLotus;
 

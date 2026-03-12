@@ -36,6 +36,7 @@ class RoundTracker {
 	void startNewRound();
 
 	void addScore(int amount);
+	void addScoreToTarget(int amount);
 	void addMana(int r, int b, int g);
 	static void promptForManaColor(ManaPool& manaPool,int nr=1);
 	int getStormCount() const;

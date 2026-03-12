@@ -24,4 +24,5 @@ class View {
 					bool& playerWon);
 	void showShop(GameState& state, ActiveRun& activeRun);
 	static void showGameOver(bool playerWon, const ActiveRun& activeRun);
+	static void loseTheGame();
 };
