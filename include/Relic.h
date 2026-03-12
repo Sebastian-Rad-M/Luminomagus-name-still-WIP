@@ -14,8 +14,8 @@ class IRelic {
 
 	virtual std::shared_ptr<IRelic> clone() const = 0;
 	// this is Ieffects resolve but for relics
-	virtual void onCardPlayed(RoundTracker& state) {}
-	virtual void onCardDrawn(RoundTracker& state) {}
-	virtual void onManaAdded(int& r, int& b, int& g, RoundTracker& state) {}
-	virtual void onDamageDealt(int& damage, RoundTracker& state) {}
+	virtual void onCardPlayed(RoundTracker& /*state*/) {}
+	virtual void onCardDrawn(RoundTracker& /*state*/) {}
+	virtual void onManaAdded(int& /*r*/, int& /*b*/, int& /*g*/, RoundTracker& /*state*/) {}
+	virtual void onDamageDealt(int& /*damage*/, RoundTracker& /*state*/) {}
 };

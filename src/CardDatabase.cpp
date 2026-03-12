@@ -113,9 +113,9 @@ void CardDatabase::loadAllCards() {
         picksAllowed = std::min(picksAllowed, (int)revealed.size());
         for (int p = 0; p < picksAllowed; p++) {
             std::cout << "\n  --- MEMORY DREDGE (Pick " << (p + 1) << "/" << picksAllowed << ") ---\n";
-            for (int i = 0; i < revealed.size(); i++) std::cout << "  [" << (i + 1) << "] " << revealed[i]->getName() << "\n";
+            for (size_t i = 0; i < revealed.size(); i++) std::cout << "  [" << (i + 1) << "] " << revealed[i]->getName() << "\n";
             int choice = 0;
-            while (choice < 1 || choice > revealed.size()) {
+            while (choice < 1 ||static_cast<size_t>(choice) > revealed.size()) {
                 std::cout << "  Select card to keep: ";
                 std::cin >> choice;
                 if (std::cin.fail()) {

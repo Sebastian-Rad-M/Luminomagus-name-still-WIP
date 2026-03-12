@@ -16,8 +16,8 @@ class IStatus {
 	virtual ~IStatus() = default;
 	virtual std::string getName() const = 0;
 	bool isExpired() const { return charges <= 0; }
-	virtual void modifyCost(int& r, int& b, int& g, int& generic) {}
-	virtual void onCardPlayed(Card& card, RoundTracker& state) {}
+	virtual void modifyCost(int& /*r*/, int& /*b*/, int& /*g*/, int& /*generic*/) {}
+	virtual void onCardPlayed(Card& /*card*/, RoundTracker& /*state*/) {}
 	virtual std::unique_ptr<IStatus> clone() const = 0;
 };
 
