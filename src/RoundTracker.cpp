@@ -1,7 +1,7 @@
 #include "ActiveRun.h"
 #include "RoundTracker.h"
 RoundTracker::RoundTracker(const ActiveRun& runData)
-	: currentRun(runData), currentScore(0),  manaPool(0, 0, 0), stormCount(0) {
+	: currentRun(runData),   manaPool(0, 0, 0),currentScore(0), stormCount(0) {
 	targetScore = currentRun.calcTargetScore();
 }
 
@@ -68,7 +68,7 @@ void RoundTracker::addMana(int r, int b, int g) {
 	relics.triggerOnManaAdded(r, b, g, *this);
 	manaPool.addMana(r, b, g);
 }
-void RoundTracker::promptForManaColor(ManaPool& manaPool,int nr) {
+void RoundTracker::promptForManaColor(ManaPool& currentmanaPool,int nr) {
     for(int i=0;i<nr;i++)
 	{char choice = ' ';
     bool valid = false;
@@ -86,7 +86,7 @@ void RoundTracker::promptForManaColor(ManaPool& manaPool,int nr) {
         }
 		
 	}
-	manaPool.addManaByColor(choice);
+	currentmanaPool.addManaByColor(choice);
 }
 }
 int RoundTracker::getStormCount() const { return stormCount; }

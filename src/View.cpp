@@ -77,7 +77,7 @@ void View::showDraft(GameState& state, ActiveRun& activeRun) {
 	for (int pick = 0; pick < 5; pick++) {
 		std::cout << "  --- Pick " << (pick + 1) << " of 5 ---\n";
 
-		for (int i = 0; i < pool.size(); i++) {
+		for (size_t i = 0; i < pool.size(); i++) {
 			std::cout << "  [" << (i + 1) << "] " << *pool[i] << "\n";
 		}
 
@@ -129,7 +129,7 @@ void View::showCombat(GameState& state, ActiveRun& activeRun, RoundTracker& comb
 			return;
 		}
 	} else {
-		for (int i = 0; i < handCards.size(); i++) {
+		for (size_t i = 0; i < handCards.size(); i++) {
 			std::cout << "  [" << (i + 1) << "] " << *handCards[i] << "\n";
 		}
 	}
@@ -336,10 +336,10 @@ void View::showShop(GameState& state, ActiveRun& activeRun) {
 			break;
 		case BuyResult::INVALID:
 			std::cout << "  [!] Invalid selection.\n";
-			break;
+			
 			std::cout << "  Press ENTER to continue...\n";
 			std::cin.ignore(10000, '\n');
-			std::cin.get();
+			std::cin.get(); break;
 	}
 }
 
