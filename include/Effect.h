@@ -40,7 +40,7 @@ class Score : public IEffect {
 	int baseScore;
 
    public:
-	Score(int score) : baseScore(score) {}
+	explicit Score(int score) : baseScore(score) {}
 	void resolve(RoundTracker& state) override;
 	std::unique_ptr<IEffect> clone() const override;
 };
@@ -49,7 +49,7 @@ class StormEffect : public IEffect {
    private:
 	std::unique_ptr<IEffect> baseEffect; 
    public:
-	StormEffect(std::unique_ptr<IEffect> effect) : baseEffect(std::move(effect)) {}
+	explicit StormEffect(std::unique_ptr<IEffect> effect) : baseEffect(std::move(effect)) {}
 	void resolve(RoundTracker& state) override;
 	std::unique_ptr<IEffect> clone() const override;
 };
@@ -70,7 +70,7 @@ private:
     std::function<void(RoundTracker&)> action;
 
 public:
-    LambdaEffect(std::function<void(RoundTracker&)> act) 
+    explicit LambdaEffect(std::function<void(RoundTracker&)> act) 
         : action(std::move(act)) {}
 
     void resolve(RoundTracker& state) override {
@@ -85,7 +85,7 @@ class ApplyStatusEffect : public IEffect {
 	std::unique_ptr<IStatus> statusToApply;
 
    public:
-	ApplyStatusEffect(std::unique_ptr<IStatus> status) : statusToApply(std::move(status)) {}
+	explicit ApplyStatusEffect(std::unique_ptr<IStatus> status) : statusToApply(std::move(status)) {}
 	void resolve(RoundTracker& state) override;
 	std::unique_ptr<IEffect> clone() const override;
 };

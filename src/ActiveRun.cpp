@@ -8,7 +8,7 @@ void ActiveRun::finishRoundSequence() {
 }
 
 int ActiveRun::calcTargetScore() const { return 10 + (currentRound - 1) * 10; }	 // formula
-void ActiveRun::resetRun(PlayerInfo p) {
+void ActiveRun::resetRun(const PlayerInfo& p) {
 	currentRound = 1;
 	roundsWon = 0;
 	player = p;

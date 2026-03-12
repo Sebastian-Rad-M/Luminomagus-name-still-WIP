@@ -12,7 +12,7 @@ class ActiveRun {
    public:
 	void finishRoundSequence();
 	int calcTargetScore() const;
-	void resetRun(PlayerInfo p);
+	void resetRun(const PlayerInfo& p);
 	PlayerInfo& getPlayer();
 	Shop& getShop();
 	void printStatus() const;

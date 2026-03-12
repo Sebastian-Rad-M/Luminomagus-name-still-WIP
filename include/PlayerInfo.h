@@ -1,6 +1,6 @@
 #pragma once
 #include "Card.h"
-#include "Cardzone.h"
+#include "CardZone.h"
 #include "RelicZone.h"
 class PlayerInfo {
    private:
@@ -10,7 +10,7 @@ class PlayerInfo {
 
    public:
 	PlayerInfo() : gold(100) {}	 // initial gold for testing, make 10 or someshit
-	PlayerInfo(int gold) : gold(gold) {}
+	explicit PlayerInfo(int gold) : gold(gold) {}
 
 	~PlayerInfo() = default;
 

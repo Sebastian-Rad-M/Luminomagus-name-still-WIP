@@ -18,10 +18,10 @@ class View {
    public:
 	static int readInt(int l, int h);
 	
-	void showMainMenu(GameState& state, ActiveRun& activeRun);
+	static void showMainMenu(GameState& state, ActiveRun& activeRun);
 	void showDraft(GameState& state, ActiveRun& activeRun);
 	void showCombat(GameState& state, ActiveRun& activeRun, RoundTracker& combatRound,
 					bool& playerWon);
 	void showShop(GameState& state, ActiveRun& activeRun);
-	void showGameOver(bool playerWon, const ActiveRun& activeRun);
+	static void showGameOver(bool playerWon, const ActiveRun& activeRun);
 };

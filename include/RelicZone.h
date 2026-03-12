@@ -12,7 +12,7 @@ class RelicZone {
 	int capacity;
 
    public:
-	RelicZone(int maxCapacity = 3);
+	explicit RelicZone(int maxCapacity = 3);
 	bool addRelic(std::shared_ptr<IRelic> relic);
 	void removeRelic(int index);
 	void clearRelicZone() { relics.clear(); }

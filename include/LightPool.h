@@ -8,7 +8,7 @@ class ManaPool {
 	int green;
 
    public:
-	ManaPool(const int r = 0, const int b = 0, const int g = 0) : red(r), blue(b), green(g) {}
+	explicit ManaPool(const int r = 0, const int b = 0, const int g = 0) : red(r), blue(b), green(g) {}
 
 	void addMana(const int r, const int b, const int g);
 	void addManaByColor(char color, int amount = 1);

@@ -25,7 +25,7 @@ class RoundTracker {
 	int nextSpellMultiplier = 1;
 
    public:
-	RoundTracker(const ActiveRun& runData);
+	explicit RoundTracker(const ActiveRun& runData);
 
 	void drawCard();
 	void drawCards(int amount);
@@ -37,7 +37,7 @@ class RoundTracker {
 
 	void addScore(int amount);
 	void addMana(int r, int b, int g);
-	void promptForManaColor(ManaPool& manaPool,int nr=1);
+	static void promptForManaColor(ManaPool& manaPool,int nr=1);
 	int getStormCount() const;
 	CardZone& getDeck();
 	ManaPool& getManaPool();

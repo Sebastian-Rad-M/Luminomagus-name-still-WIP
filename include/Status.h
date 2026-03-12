@@ -23,7 +23,7 @@ class IStatus {
 
 class OverchargeStatus : public IStatus {
    public:
-	OverchargeStatus(int c = 1) : IStatus(c) {}
+	explicit OverchargeStatus(int c = 1) : IStatus(c) {}
 	std::string getName() const override { return "Overcharged"; }
 
 	std::unique_ptr<IStatus> clone() const override {

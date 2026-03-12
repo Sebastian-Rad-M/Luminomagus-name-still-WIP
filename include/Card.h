@@ -17,7 +17,7 @@ class Card {
 
    public:
 	Card();
-	Card(const std::string& name, const int genericCost = 0, const int redCost = 0,
+	explicit Card(const std::string& name, const int genericCost = 0, const int redCost = 0,
 		 const int blueCost = 0, const int greenCost = 0, const char rarity = 'C',
 		 const std::shared_ptr<modifier> mod = nullptr);
 	Card(const Card& other);
