@@ -48,13 +48,18 @@ include(cmake/CopyHelper.cmake)
 
 ###############################################################################
 
-# NOTE: update executable name in .github/workflows/cmake.yml:25 when changing name here
 add_executable(${MAIN_EXECUTABLE_NAME}
     main.cpp
 )
+
+# 1. Automatically grab every .cpp file in the src/ folder!
+# CONFIGURE_DEPENDS tells CMake to automatically refresh if you add/delete files.
+file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS "src/*.cpp")
+
+# 2. Tell CMake to compile them
 target_sources(${MAIN_EXECUTABLE_NAME}
     PRIVATE
-        src/Example.cpp
+        ${SRC_FILES}
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
