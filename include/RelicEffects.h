@@ -1,0 +1,72 @@
+#pragma once
+#include <memory>
+
+#include "Effect.h"	 // this is fun
+#include "Relic.h"
+
+class OnManaRelic : public IRelic {
+   private:
+	std::string name;
+	std::string description;
+	char rarity;
+	int multiplier;
+	std::unique_ptr<IEffect> triggerEffect;	 // Optional extra effect when triggered
+   public:
+	OnManaRelic(const std::string& n, const std::string& desc, const char r, const int mult = 1,
+				std::unique_ptr<IEffect> effect = nullptr);
+	std::string getName() const override;
+	std::string getDescription() const override;
+	char getRarity() const override;
+
+	void onManaAdded(int& r, int& b, int& g, RoundTracker& state) override;
+	std::shared_ptr<IRelic> clone() const override;
+};
+
+class OnCastTriggerRelic : public IRelic {
+   private:
+	std::string name;
+	std::string description;
+	char rarity;
+	std::unique_ptr<IEffect> triggeredEffect;
+
+   public:
+	OnCastTriggerRelic(const std::string& n, const std::string& desc, const char r,
+					   std::unique_ptr<IEffect> effect);
+	std::string getName() const override;
+	std::string getDescription() const override;
+	char getRarity() const override;
+	void onCardPlayed(RoundTracker& state) override;
+	std::shared_ptr<IRelic> clone() const override;
+};
+
+class OnDamageRelic : public IRelic {
+   private:
+	std::string name, description;
+	char rarity;
+	int flatBonus;							 // The modifier
+	std::unique_ptr<IEffect> triggerEffect;	 // The optional trigger
+
+   public:
+	OnDamageRelic(std::string n, std::string desc, char r, int bonus = 0,
+				  std::unique_ptr<IEffect> effect = nullptr);
+	std::string getName() const override;
+	std::string getDescription() const override;
+	char getRarity() const override;
+	void onDamageDealt(int& damage, RoundTracker& state) override;
+	std::shared_ptr<IRelic> clone() const override;
+};
+
+class OnDrawRelic : public IRelic {
+   private:
+	std::string name, description;
+	char rarity;
+	std::unique_ptr<IEffect> triggerEffect;
+
+   public:
+	OnDrawRelic(std::string n, std::string desc, char r, std::unique_ptr<IEffect> effect);
+	std::string getName() const override;
+	std::string getDescription() const override;
+	char getRarity() const override;
+	void onCardDrawn(RoundTracker& state) override;
+	std::shared_ptr<IRelic> clone() const override;
+};
