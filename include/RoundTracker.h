@@ -53,4 +53,5 @@ class RoundTracker {
 	bool playCardFromHand(int index);
 	int getCurrentScore() const;
 	int getTargetScore() const;
+	void setStormCount(int nr);
 };

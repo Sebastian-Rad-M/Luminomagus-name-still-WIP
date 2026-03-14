@@ -147,15 +147,19 @@ bool RoundTracker::playCardFromHand(int index) {
 			status->onCardPlayed(*card, *this);
 		}
 		relics.triggerOnCardPlayed(*this);
-		for (auto it = activeStatuses.begin(); it != activeStatuses.end();) {
-			if ((*it)->isExpired()) {
-				it = activeStatuses.erase(it);
-			} else {
-				it++;
-			}
-		}
-		hand.moveCardTo(index, graveyard);
+		
+		CardZone* targetZone = &graveyard; 
+
+		for (auto it = activeStatuses.begin(); it != activeStatuses.end();) 
+			if ((*it)->isExpired()) it = activeStatuses.erase(it);
+				else {
+					(*it)->modifyDestination(targetZone, *this);
+					it++;
+					}
+		
+		hand.moveCardTo(index, *targetZone);
 		return true;
+
 	} else {
 		std::cout << "  --> [!] Not enough mana to play " << card->getName() << "!\n";
 		return false;
@@ -163,15 +167,11 @@ bool RoundTracker::playCardFromHand(int index) {
 }
 int RoundTracker::requestHandTarget() {
 	const auto& handCards = hand.getCards();
-	if (handCards.empty()) {
-		return -1;
-	}
-
+	if (handCards.empty()) return -1;
 	std::cout << "\n  --- TARGET ---\n";
-for (size_t i = 0; i < handCards.size(); i++) {
-			std::cout << "  [" << (i + 1) << "] " << *handCards[i] << "\n";
-	}
-
+for (size_t i = 0; i < handCards.size(); i++) std::cout << "  [" << (i + 1) << "] " << *handCards[i] << "\n";
 	std::cout << "  Select a card (1-" << handCards.size() << "): ";
 	return View::readInt(1, handCards.size()) - 1;
 }
+void RoundTracker::setStormCount(int nr){stormCount=nr;}
+

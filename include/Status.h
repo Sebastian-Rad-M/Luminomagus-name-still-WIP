@@ -18,6 +18,8 @@ class IStatus {
 	bool isExpired() const { return charges <= 0; }
 	virtual void modifyCost(int& /*r*/, int& /*b*/, int& /*g*/, int& /*generic*/) {}
 	virtual void onCardPlayed(Card& /*card*/, RoundTracker& /*state*/) {}
+	
+	virtual void modifyDestination(CardZone*& /*destination*/, RoundTracker& /*state*/) {}
 	virtual std::unique_ptr<IStatus> clone() const = 0;
 };
 
@@ -37,4 +39,23 @@ class OverchargeStatus : public IStatus {
 			charges--;
 		}
 	}
+};
+class EchoStatus : public IStatus {
+public:
+    explicit EchoStatus(int c = 1) : IStatus(c) {}
+    std::string getName() const override { return "Echo"; }
+    std::unique_ptr<IStatus> clone() const override {
+        return std::make_unique<EchoStatus>(charges);
+    }
+    virtual void onCardPlayed(Card& card, RoundTracker& state) override;
+    
+};
+class GlobalExileStatus : public IStatus {
+public:
+    explicit GlobalExileStatus(int c) : IStatus(c) {}
+    std::string getName() const override { return "Dreaming of the past"; }
+    std::unique_ptr<IStatus> clone() const override {
+        return std::make_unique<GlobalExileStatus>(charges);
+    }
+   virtual void modifyDestination(CardZone*& destination, RoundTracker& state) override;
 };

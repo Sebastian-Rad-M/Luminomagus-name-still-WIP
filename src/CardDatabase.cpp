@@ -194,9 +194,7 @@ library["c_interfere_with_the_pattern"] = std::move(interfereWithThePattern);
 	library["c_ad_nauseum"] = std::move(adNauseum);
 
 	Card internalReflection("Internal Reflection", 0, 0, 0, 2, 'U'); // 2 Green, Uncommon
-
-	internalReflection.addEffect(std::make_unique<LambdaEffect>(
-		[](RoundTracker& state) {
+	internalReflection.addEffect(std::make_unique<LambdaEffect>([](RoundTracker& state) {
 			auto& hand = state.getHand();
 			//auto& deck = state.getDeck();
 			auto& grave = state.getGraveyard();
@@ -214,9 +212,7 @@ library["c_interfere_with_the_pattern"] = std::move(interfereWithThePattern);
 				std::cout << "  --> Discarded " << handCards[index]->getName() << "\n";
 				grave.addCard(handCards[index]);
 				hand.removeCard(index);
-			}
-		}
-	));
+			}}));
 	library["c_internal_reflection"] = std::move(internalReflection);
 
 	Card strokeTheFadingEmbers("Stroke the fading embers", 0, 2, 0, 0, 'U'); 
@@ -224,7 +220,6 @@ library["c_interfere_with_the_pattern"] = std::move(interfereWithThePattern);
 	library["c_stroke_the_fading_embers"] = std::move(strokeTheFadingEmbers);
 
 	Card radiantDecay("Radiant Decay", 0, 1, 0, 1, 'U'); 
-
 radiantDecay.addEffect(std::make_unique<LambdaEffect>([](RoundTracker& state) {
         auto& grave = state.getGraveyard();
         auto& graveCards = grave.getCards();
@@ -237,9 +232,9 @@ radiantDecay.addEffect(std::make_unique<LambdaEffect>([](RoundTracker& state) {
         grave.removeCard(index); 
     }
 ));
-
 library["c_radiant_decay"] = std::move(radiantDecay);
 	// Rares and Legendaries
+
 	Card recallWisdom("Recall Wisdom", 0, 0, 1, 0, 'R');
 	recallWisdom.addEffect(std::make_unique<DrawCardEffect>(3));
 	library["c_recallWisdom"] = recallWisdom;
@@ -248,6 +243,11 @@ library["c_radiant_decay"] = std::move(radiantDecay);
 	ponderTheSilence.addEffect(std::make_unique<StormEffect>((std::make_unique<DrawCardEffect>(3))));
 	library["c_ponderTheSilence"] = ponderTheSilence;
 
+	Card glimpseWCHB("Glimpse what could have been", 0, 0, 0, 1, 'C');
+	glimpseWCHB.addEffect(std::make_unique<DrawCardEffect>(2));
+	glimpseWCHB.addEffect(std::make_unique<AddManaEffect>(0,0,0,1));
+	glimpseWCHB.addEffect(std::make_unique<DiscardEffect>(3));
+	library["c_glimpseWCHB"] =glimpseWCHB;
 
 	Card doomsday("Doomsday", 0, 0, 2, 1, 'L'); // 2 Blue, 1 Green, Legendary
 	doomsday.addEffect(std::make_unique<LambdaEffect>([](RoundTracker& state) {
@@ -287,64 +287,127 @@ library["c_radiant_decay"] = std::move(radiantDecay);
             std::cout << "  --> Exiled " << cardsToExile << " cards! Dealt " << 5* cardsToExile << " damage!\n";
         }));
 	library["c_symphonyOfDust"] = std::move(symphonyOfDust);
-	
+	// 2 Generic, 1 Green, Yags will
+
+	Card dreamingOfThePast("Dreaming of the past", 2, 0, 0, 1, 'R'); 
+	dreamingOfThePast.addEffect(std::make_unique<LambdaEffect>(
+		[](RoundTracker& state) {
+			auto& grave = state.getGraveyard();
+			auto& hand = state.getHand();
+			while (!grave.getCards().empty())hand.addCard(grave.popTopCard());
+			state.addStatus(std::make_unique<GlobalExileStatus>(999));    }));
+	library["c_dreaming_of_the_past"] = std::move(dreamingOfThePast);
+		
+
+			//TIR, next spell has echo
+			// 2 Red, 1 Green, Rare (Guessing rarity!)
+	Card totalInternalReflection("Total internal Reflection", 0, 2, 0, 1, 'L'); 
+	totalInternalReflection.addEffect(std::make_unique<LambdaEffect>([](RoundTracker& state) {state.addStatus(std::make_unique<EchoStatus>(1));}));
+	library["c_total_internal_reflection"] = std::move(totalInternalReflection);
+		
+
+	// 2 Generic, 1 Red, Rare
+	Card lookUponMyWorks("Look Upon My Works", 2, 1, 0, 0, 'R'); 
+	lookUponMyWorks.addEffect(std::make_unique<LambdaEffect>([](RoundTracker& state) {
+			std::cout << "  --> You may pay multiples of 2 Light to score 20 points per multiple.\n";
+			int x =readInt(0, 2000);
+			if(state.getManaPool().canAfford(0,0,0,2*x)){
+			state.getManaPool().spendMana(0,0,0,x * 2); 
+			state.addScore(x * 20);}
+		}));
+	library["c_look_upon_my_works"] = std::move(lookUponMyWorks);
+
+	Card incandescentWrath("Incandescent Wrath", 3, 0, 1, 0, 'R'); 
+	incandescentWrath.addEffect(std::make_unique<LambdaEffect>([](RoundTracker& state) {
+			auto& hand = state.getHand();
+			auto& grave = state.getGraveyard();
+			int discardedCount = hand.getCards().size();
+			for (int i = discardedCount - 1; i >= 0; --i) hand.moveCardTo(i,grave); 
+			state.addScore( 5 * discardedCount);
+			for(int i=0;i<discardedCount - 1;i++)state.drawCard();
+		}
+	));
+	library["c_incandescent_wrath"] = std::move(incandescentWrath);
+
+	Card absoluteKnowledge("Absolute knowledge", 0, 0, 3, 0, 'R'); 
+	absoluteKnowledge.addEffect(std::make_unique<LambdaEffect>([](RoundTracker& state) {
+		if (state.getDeck().getCards().empty())state.addScore(200); 
+			else state.drawCards(2);
+	}));
+	library["c_absolute_knowledge"] = std::move(absoluteKnowledge);
+
 	Card digTroughMemories("Dig through memories", 1, 0, 0, 1,'U'); 
-	digTroughMemories.addEffect(std::make_unique<LambdaEffect>(
-    [](RoundTracker& state) {
-        auto& grave = state.getGraveyard();
-		auto& exile = state.getExile();
-		auto& hand  = state.getHand();
-        auto& deck  = state.getDeck(); 
-        int maxExile = grave.getCards().size();
-        if (maxExile == 0) {
-            std::cout << "  [!] Graveyard is empty. You exile 0, look at 0.\n";
-            return; 
-        }
-		int numToExile = -1;
-        while (numToExile < 0 || numToExile > maxExile) {
-            std::cout << "  Graveyard has " << maxExile << " cards.\n"<< "  How many do you want to exile from the top? (0 - " << maxExile << "): ";
-            std::cin >> numToExile;
-            if (std::cin.fail()) {std::cin.clear(); std::cin.ignore(10000, '\n');numToExile = -1; }
-        }
-        if (numToExile == 0) return; 
-        for (int i = 0; i < numToExile; i++) exile.addCard(grave.popTopCard());  //TODO:maybe make em pick? nah, its a feature
-        std::vector<std::shared_ptr<Card>> revealed;
-        int cardsC = std::min(numToExile, (int)deck.getCards().size());
-        for (int i = 0; i < cardsC; i++) revealed.push_back(deck.popTopCard());
-        int picks = (numToExile >= 5) ? 2 : 1; 
-        picks = std::min(picks, (int)revealed.size());
-        for (int p = 0; p < picks; p++) {
-            std::cout << "\n  --- MEMORY DREDGE (Pick " << (p + 1) << "/" << picks << ") ---\n";
-            for (size_t i = 0; i < revealed.size(); i++) std::cout << "  [" << (i + 1) << "] " << revealed[i]->getName() << "\n";
-            int choice = 0;
-            while (choice < 1 ||static_cast<size_t>(choice) > revealed.size()) {
-                std::cout << "  Select card to keep: ";
-                std::cin >> choice;
-                if (std::cin.fail()) {
-                    std::cin.clear(); std::cin.ignore(10000, '\n'); choice = 0;
-                }
-            }
-            int index = choice - 1;
-            hand.addCard(revealed[index]);
-            std::cout << "  --> Added " << revealed[index]->getName() <<"\n";
-            revealed.erase(revealed.begin() + index);
-        }
+		digTroughMemories.addEffect(std::make_unique<LambdaEffect>(
+		[](RoundTracker& state) {
+			auto& grave = state.getGraveyard();
+			auto& exile = state.getExile();
+			auto& hand  = state.getHand();
+			auto& deck  = state.getDeck(); 
+			int maxExile = grave.getCards().size();
+			if (maxExile == 0) {
+				std::cout << "  [!] Graveyard is empty. You exile 0, look at 0.\n";
+				return; 
+			}
+			int numToExile = -1;
+			while (numToExile < 0 || numToExile > maxExile) {
+				std::cout << "  Graveyard has " << maxExile << " cards.\n"<< "  How many do you want to exile from the top? (0 - " << maxExile << "): ";
+				std::cin >> numToExile;
+				if (std::cin.fail()) {std::cin.clear(); std::cin.ignore(10000, '\n');numToExile = -1; }
+			}
+			if (numToExile == 0) return; 
+			for (int i = 0; i < numToExile; i++) exile.addCard(grave.popTopCard());  //TODO:maybe make em pick? nah, its a feature
+			std::vector<std::shared_ptr<Card>> revealed;
+			int cardsC = std::min(numToExile, (int)deck.getCards().size());
+			for (int i = 0; i < cardsC; i++) revealed.push_back(deck.popTopCard());
+			int picks = (numToExile >= 5) ? 2 : 1; 
+			picks = std::min(picks, (int)revealed.size());
+			for (int p = 0; p < picks; p++) {
+				std::cout << "\n  --- MEMORY DREDGE (Pick " << (p + 1) << "/" << picks << ") ---\n";
+				for (size_t i = 0; i < revealed.size(); i++) std::cout << "  [" << (i + 1) << "] " << revealed[i]->getName() << "\n";
+				int choice = 0;
+				while (choice < 1 ||static_cast<size_t>(choice) > revealed.size()) {
+					std::cout << "  Select card to keep: ";
+					std::cin >> choice;
+					if (std::cin.fail()) {
+						std::cin.clear(); std::cin.ignore(10000, '\n'); choice = 0;
+					}
+				}
+				int index = choice - 1;
+				hand.addCard(revealed[index]);
+				std::cout << "  --> Added " << revealed[index]->getName() <<"\n";
+				revealed.erase(revealed.begin() + index);
+			}
 
-        if (!revealed.empty()) {
-            std::cout << "  --> Put " << revealed.size() << " remaining cards on the bottom of the deck.\n";
-            for (auto& leftover : revealed)
-                deck.addCardToBottom(leftover); 
-        }
-    }
-));
+			if (!revealed.empty()) {
+				std::cout << "  --> Put " << revealed.size() << " remaining cards on the bottom of the deck.\n";
+				for (auto& leftover : revealed)
+					deck.addCardToBottom(leftover); 
+			}
+		}
+	));
+	library["c_digTroughMemories"] = std::move(digTroughMemories);
+		
+Card sparkOfGenesis("Spark of Genesis", 0, 1, 2, 0, 'R'); // 1 Red, 2 Blue
 
-library["c_digTroughMemories"] = std::move(digTroughMemories);
-	
-Card fleurDuNeant("Fleur du neant", 0, 0, 0, 0, 'L');
-	fleurDuNeant.addEffect(std::make_unique<AddManaEffect>(3, 3, 3));
-	library["c_fleurDuNeant"] =fleurDuNeant;
+sparkOfGenesis.addEffect(std::make_unique<LambdaEffect>([](RoundTracker& state) {
+    auto& grave = state.getGraveyard();
+    auto& deck = state.getDeck();
+    int gySize = grave.getCards().size();
+    for (int i = gySize - 1; i >= 0; --i) grave.moveCardTo(i, deck);
+    deck.shuffle();
+	state.drawCards(7);
+    state.setStormCount(state.getStormCount() * 2);
+}));
+library["c_spark_of_genesis"] = std::move(sparkOfGenesis);
+
+	Card fleurDuNeant("Fleur du neant", 0, 0, 0, 0, 'L');
+		fleurDuNeant.addEffect(std::make_unique<AddManaEffect>(3, 3, 3));
+		library["c_fleurDuNeant"] =fleurDuNeant;
 
 	// TODO: JSON PARSER
+	//#1 put off
+	//#2 avoided
+	//#3 skipped
 }
 std::shared_ptr<Card> CardDatabase::createCard(const std::string& cardID) {
 	if (library.find(cardID) != library.end()) {
