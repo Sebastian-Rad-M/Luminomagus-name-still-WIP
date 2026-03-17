@@ -13,7 +13,7 @@ void ManaPool::addManaByColor(char color, int amount) {
         case 'B': this->blue += amount; break;
         case 'G': this->green += amount; break;
         default:std::cout << "  [!] System Error: Tried to add unknown mana color '" << color << "'\n";break;
-    }//TODO: error handling
+    }// error handling
 }
 void ManaPool::clearPool() {
 	red = 0;
@@ -33,13 +33,12 @@ bool ManaPool::canAfford(const int costR, const int costB, const int costG,
 	return totalLeftover >= costGeneric;
 }
 
-// TODO: check if can afford first
 void ManaPool::spendMana(const int costR, const int costB, const int costG, const int costGeneric) {
 	red -= costR;
 	blue -= costB;
 	green -= costG;
 	/// We drain Green first, then Blue, then Red (arbitrary priority).
-	/// TODO: player chosen
+	/// WHEN WE ARE IN A GUI, make it player chosen
 	int genericRemaining = costGeneric;
 	// is this overkill? yes
 	int* const vars[3] = {&green, &blue, &red};

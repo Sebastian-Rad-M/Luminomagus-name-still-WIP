@@ -57,7 +57,6 @@ void ApplyStatusEffect::resolve(RoundTracker& state) {
 	state.addStatus(statusToApply->clone());
 }
 
-// TODO: macros?
 std::unique_ptr<IEffect> DrawCardEffect::clone() const {
 	return std::make_unique<DrawCardEffect>(*this);
 }

@@ -10,9 +10,7 @@ void RoundTracker::drawCard() {
 	if (card) {
 		hand.addCard(card);
 		relics.triggerOnCardDrawn(*this);
-	} else {
-		std::cout << "Deck is empty!\n";
-	}  // TODO: maybe lose? either way add an std exception later
+	} else isLost = true;
 }
 void RoundTracker::drawCards(int amount) {
 	for (int i = 0; i < amount; i++) {

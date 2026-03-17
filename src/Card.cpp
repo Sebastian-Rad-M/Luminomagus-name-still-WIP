@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "Card.h"
-#include "IEffect.h"
+#include "Effect.h"
 #include "RoundTracker.h"
 Card::Card()
 	: name(""), genericCost(0), redCost(0), blueCost(0), greenCost(0), rarity('C'), mod(nullptr) {}

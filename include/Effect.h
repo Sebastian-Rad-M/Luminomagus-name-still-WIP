@@ -1,8 +1,16 @@
 #pragma once
-#include "IEffect.h"
 #include "RoundTracker.h"
 #include <functional>
 enum class CompareOp { LESS_THAN, GREATER_THAN, EQUALS, MODULO_EQUALS_ZERO };
+
+class RoundTracker;
+class IEffect {
+   public:
+	virtual ~IEffect() = default;
+	virtual void resolve(RoundTracker& state) = 0;
+
+	virtual std::unique_ptr<IEffect> clone() const = 0;
+};
 
 class DrawCardEffect : public IEffect {
    private:

@@ -2,8 +2,8 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include "Effect.h"
 
-#include "IEffect.h"
 class modifier;
 class RoundTracker;
 

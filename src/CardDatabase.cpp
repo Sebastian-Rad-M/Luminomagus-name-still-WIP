@@ -177,14 +177,13 @@ library["c_interfere_with_the_pattern"] = std::move(interfereWithThePattern);
 					std::cout << "  [!!!] Total cost exceeded 13 (" << totalCostRevealed << "). YOU LOSE.\n";
 					state.addScoreToTarget(9999); 
 					std::cout << "Please concede here";
-					//TODO: make an actual lose the game func
+					state.triggerLoss();
 					break;
 				}
 				std::cout << "\n  [1] Reveal another card\n";
 				std::cout << "  [2] Stop here\n";
 				int choice = readInt(1, 2);
 				if (choice == 2) {
-					std::cout << "  --> You stepped back from the brink. Ad Nauseum ends.\n";
 					break;
 				}
 			}
@@ -355,7 +354,7 @@ library["c_radiant_decay"] = std::move(radiantDecay);
 				if (std::cin.fail()) {std::cin.clear(); std::cin.ignore(10000, '\n');numToExile = -1; }
 			}
 			if (numToExile == 0) return; 
-			for (int i = 0; i < numToExile; i++) exile.addCard(grave.popTopCard());  //TODO:maybe make em pick? nah, its a feature
+			for (int i = 0; i < numToExile; i++) exile.addCard(grave.popTopCard());  
 			std::vector<std::shared_ptr<Card>> revealed;
 			int cardsC = std::min(numToExile, (int)deck.getCards().size());
 			for (int i = 0; i < cardsC; i++) revealed.push_back(deck.popTopCard());
@@ -408,6 +407,7 @@ library["c_spark_of_genesis"] = std::move(sparkOfGenesis);
 	//#1 put off
 	//#2 avoided
 	//#3 skipped
+	//#4 genuenly dont care yet
 }
 std::shared_ptr<Card> CardDatabase::createCard(const std::string& cardID) {
 	if (library.find(cardID) != library.end()) {
@@ -475,5 +475,5 @@ std::shared_ptr<Card> CardDatabase::getRandomCard() {
 	}
 
 	return nullptr;	 // Fallback
-					 /// TODO: error handling
+					 /// error handling
 }

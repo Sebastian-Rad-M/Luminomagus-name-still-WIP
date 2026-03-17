@@ -32,9 +32,22 @@ int View::readInt(int l, int h) {
 	return value;
 }
 void View::loseTheGame(){
-
+	clearScreen();
+	std::cout << "\n\n"; //is this tacky? yes, but i am bored
+ 	std::cout << "  ██╗   ██╗ ██████╗ ██╗   ██╗    ██████╗ ██╗███████╗██████╗ \n";
+	std::cout << "  ╚██╗ ██╔╝██╔═══██╗██║   ██║    ██╔══██╗██║██╔════╝██╔══██╗\n";
+	std::cout << "   ╚████╔╝ ██║   ██║██║   ██║    ██║  ██║██║█████╗  ██║  ██║\n";
+	std::cout << "    ╚██╔╝  ██║   ██║██║   ██║    ██║  ██║██║██╔══╝  ██║  ██║\n";
+	std::cout << "     ██║   ╚██████╔╝╚██████╔╝    ██████╔╝██║███████╗██████╔╝\n";
+	std::cout << "     ╚═╝    ╚═════╝  ╚═════╝     ╚═════╝ ╚═╝╚══════╝╚═════╝ \n\n";
+	std::cout << "  Press ENTER to accept your fate...\n";
 	
+	std::cin.clear();
+	std::cin.ignore(10000, '\n');
+	std::cin.get();
 }
+	
+
 
 void View::showMainMenu(GameState& state, ActiveRun& activeRun) {
 	printSeparator("MAIN MENU");
@@ -73,7 +86,7 @@ void View::showDraft(GameState& state, ActiveRun& activeRun) {
 			std::cout << "  [ERROR] Database is empty! Cannot draft.\n";
 			state = GameState::MAIN_MENU;
 			return;
-			/// TODO: try catch or error or some shi
+			/// try catch or error or some shi
 		}
 	}
 
@@ -218,10 +231,13 @@ void View::showCombat(GameState& state, ActiveRun& activeRun, RoundTracker& comb
 			state = GameState::GAME_OVER;
 			return;
 		}
-	} else {
-		combatRound.playCardFromHand(cardChoice - 1);
+	} else combatRound.playCardFromHand(cardChoice - 1);
+	if (combatRound.hasLost()) {
+		View::loseTheGame();
+		playerWon = false;
+		state = GameState::GAME_OVER;
+		return;
 	}
-
 	if (combatRound.isRoundWon()) {
 		std::cout << "\n  *** BLIND DEFEATED! ***\n";
 		std::cout << "  Score : " << combatRound.getCurrentScore() << " / "

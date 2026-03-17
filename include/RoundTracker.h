@@ -22,7 +22,7 @@ class RoundTracker {
 	int currentScore;
 	int targetScore;
 	int stormCount;
-	//int nextSpellMultiplier = 1;
+	bool isLost = false;
 
    public:
 	explicit RoundTracker(const ActiveRun& runData);
@@ -54,4 +54,6 @@ class RoundTracker {
 	int getCurrentScore() const;
 	int getTargetScore() const;
 	void setStormCount(int nr);
+	bool hasLost() const { return isLost; }
+	void triggerLoss() { isLost = true; }
 };
