@@ -6,10 +6,15 @@ class ManaPool {
 	int red;
 	int blue;
 	int green;
+	int capacity = -1;
 
    public:
 	explicit ManaPool(const int r = 0, const int b = 0, const int g = 0) : red(r), blue(b), green(g) {}
 
+
+	void setCapacity(int c) { capacity = c; }
+	int getTotalMana() const { return red + blue + green; }
+	
 	void addMana(const int r, const int b, const int g);
 	void addManaByColor(char color, int amount = 1);
 	void clearPool();

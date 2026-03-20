@@ -1,5 +1,5 @@
 #include "GameManager.h"
-
+#include "BossFactory.h"
 #include "RelicFactory.h"//DEBUG
 
 GameManager& GameManager::instance() {
@@ -26,8 +26,8 @@ void GameManager::run() {
 
 				view.showDraft(state, activeRun);
 				round.emplace(activeRun, &view);
-				round->setupDeck(activeRun.getPlayer().getDeck(),
-								 activeRun.getPlayer().getRelicZone());
+				round->setupDeck(activeRun.getPlayer().getDeck(),activeRun.getPlayer().getRelicZone());
+				
 				round->startNewRound();
 				 break;
 
@@ -37,11 +37,12 @@ void GameManager::run() {
 
 			case GameState::SHOP:
 				view.showShop(state, activeRun);
-				round.emplace(activeRun, &view);
 				if (state == GameState::COMBAT) { 
 					round.emplace(activeRun, &view);
-					round->setupDeck(activeRun.getPlayer().getDeck(),
-									 activeRun.getPlayer().getRelicZone());
+					round->setupDeck(activeRun.getPlayer().getDeck(),activeRun.getPlayer().getRelicZone());
+					int cr = activeRun.getCurrentRound();
+					if (cr == 3 || cr == 6 || cr == 9) round->addStatus(BossFactory::getRandomBoss('R'));
+						else if (cr == 10) round->addStatus(BossFactory::getRandomBoss('E'));
 					round->startNewRound();
 				}
 				break;

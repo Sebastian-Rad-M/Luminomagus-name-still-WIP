@@ -19,7 +19,6 @@ void EchoStatus::onCardPlayed(Card& card, RoundTracker& state){
     }
 
 void GlobalExileStatus::modifyDestination(CardZone*& destination, RoundTracker& state){
-        if (charges > 0) {
-			destination = &state.getExile(); 
-            charges--;       }
+        if (charges > 0) destination = &state.getExile(); 
+           
     }

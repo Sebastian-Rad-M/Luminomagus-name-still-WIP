@@ -60,16 +60,16 @@ void View::showMainMenu(GameState& state, ActiveRun& activeRun) {
 	if (choice == 1) {
 		activeRun.resetRun(PlayerInfo());  ///!!
 		const std::string APPEND_COLORS[3] = {"red", "blue", "green"};
-		for (int i = 0; i < 2; i++) {
-			for (size_t j = 0; j < 3; j++) {
-				activeRun.getPlayer().getDeck().addCard(
-					CardDatabase::getInstance().createCard("c_basic_" + APPEND_COLORS[j]));
+		for (int i = 0; i < 2; i++) 
+		{
+			for (size_t j = 0; j < 3; j++) 
+			{
+				activeRun.getPlayer().getDeck().addCard(CardDatabase::getInstance().createCard("c_basic_" + APPEND_COLORS[j]));
 			}
 		}
 		state = GameState::DRAFT;
-	} else {
+	} else 
 		state = GameState::GAME_OVER;
-	}
 }
 
 void View::showDraft(GameState& state, ActiveRun& activeRun) {
@@ -223,7 +223,7 @@ void View::showCombat(GameState& state, ActiveRun& activeRun, RoundTracker& comb
                 if (sellChoice > 0) {
                     int index = sellChoice - 1;
                     std::cout << "  --> Shattered " << permRelics[index]->getName() << " for 2 Mana!\n";
-					combatRound.promptForManaColor(combatRound.getManaPool(),2);
+					combatRound.promptForManaColor(2);
                     
                     combatRound.getRelicZone().removeRelic(index); 
                     activeRun.getPlayer().getRelicZone().removeRelic(index);

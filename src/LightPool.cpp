@@ -1,12 +1,23 @@
 #include "LightPool.h"
 #include <cctype>
 void ManaPool::addMana(int r, int b, int g) {
-	red += r;
-	blue += b;
-	green += g;
+	if (capacity == -1) {
+		red += r; blue += b; green += g;
+		return;
+	}
+	int spaceLeft = capacity - getTotalMana();
+	int addR = std::min(r, spaceLeft); spaceLeft -= addR;
+	int addB = std::min(b, spaceLeft); spaceLeft -= addB;
+	int addG = std::min(g, spaceLeft); spaceLeft -= addG;
+	red += addR; blue += addB; green += addG;
 }
 void ManaPool::addManaByColor(char color, int amount) {
     color = std::toupper(color);
+	if (capacity != -1) {
+		int spaceLeft = capacity - getTotalMana();
+		if (amount > spaceLeft) amount = spaceLeft;
+		if (amount <= 0) return;
+	}
     switch (color) {
         case 'R': 
             this->red += amount; break;

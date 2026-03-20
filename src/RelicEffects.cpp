@@ -78,16 +78,11 @@ std::shared_ptr<IRelic> OnManaRelic::clone() const {
 }
 std::shared_ptr<IRelic> OnDamageRelic::clone() const {
 	auto clonedEffect = triggerEffect ? triggerEffect->clone() : nullptr;
-	return std::make_shared<OnDamageRelic>(name, description, rarity, flatBonus,
-										   std::move(clonedEffect));
+	return std::make_shared<OnDamageRelic>(name, description, rarity, flatBonus,std::move(clonedEffect));
 }
-std::shared_ptr<IRelic> OnCastTriggerRelic::clone() const {
-	return std::make_shared<OnCastTriggerRelic>(name, description, rarity,
-												triggeredEffect->clone());
-}
-std::shared_ptr<IRelic> OnDrawRelic::clone() const {
-	return std::make_shared<OnDrawRelic>(name, description, rarity, triggerEffect->clone());
-}
+
+std::shared_ptr<IRelic> OnCastTriggerRelic::clone() const {return std::make_shared<OnCastTriggerRelic>(name, description, rarity,triggeredEffect->clone());}
+std::shared_ptr<IRelic> OnDrawRelic::clone() const {return std::make_shared<OnDrawRelic>(name, description, rarity, triggerEffect->clone());}
 
 
 OnRoundStartRelic::OnRoundStartRelic(std::string n, std::string desc, char r, std::unique_ptr<IEffect> effect)
@@ -101,9 +96,7 @@ void OnRoundStartRelic::onRoundStart(RoundTracker& state) {
 		triggerEffect->resolve(state);
 	}
 }
-std::shared_ptr<IRelic> OnRoundStartRelic::clone() const {
-	return std::make_shared<OnRoundStartRelic>(name, description, rarity, triggerEffect->clone());
-}
+std::shared_ptr<IRelic> OnRoundStartRelic::clone() const {return std::make_shared<OnRoundStartRelic>(name, description, rarity, triggerEffect->clone());}
 
 OnRoundEndRelic::OnRoundEndRelic(std::string n, std::string desc, char r, std::unique_ptr<IEffect> effect)
 	: name(n), description(desc), rarity(r), triggerEffect(std::move(effect)) {}

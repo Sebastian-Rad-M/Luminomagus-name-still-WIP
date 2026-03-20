@@ -19,9 +19,14 @@ public:
     virtual std::string getName() const = 0;
     bool isExpired() const { return charges <= 0; }
     
-    virtual void modifyCost(int& /*r*/, int& /*b*/, int& /*g*/, int& /*generic*/) {}
+    virtual void modifyCost(int& /*r*/, int& /*b*/, int& /*g*/, int& /*generic*/, RoundTracker& /*state*/) {};
     virtual void onCardPlayed(Card& /*card*/, RoundTracker& /*state*/) {}
     virtual void modifyDestination(CardZone*& /*destination*/, RoundTracker& /*state*/) {}   
+    virtual bool canPlayCard(Card& /*card*/, RoundTracker& /*state*/) { return true; }
+    virtual void modifyTargetScore(int& /*targetScore*/, RoundTracker& /*state*/) {}
+    virtual void onApplied(RoundTracker& /*state*/) {}
+    virtual void onCardDrawn(Card& /*card*/, RoundTracker& /*state*/) {}
+    virtual void onManaAdded(int /*r*/, int /*b*/, int /*g*/, RoundTracker& /*state*/) {}
     virtual std::unique_ptr<IStatus> clone() const = 0;
 };
 
@@ -66,27 +71,52 @@ class CostReductionStatus : public IStatus {
    public:
 	explicit CostReductionStatus(int c) : IStatus(c) {}
 	std::string getName() const override { return "Kineticism"; }
-	std::unique_ptr<IStatus> clone() const override {
-		return std::make_unique<CostReductionStatus>(charges);
-	}
-	void modifyCost(int& /*r*/, int& /*b*/, int& /*g*/, int& generic) override {
-		if (generic > 0) generic -= 1;
-	}
+	std::unique_ptr<IStatus> clone() const override {return std::make_unique<CostReductionStatus>(charges);}
+	void modifyCost(int& /*r*/, int& /*b*/, int& /*g*/, int& generic, RoundTracker& /*state*/) override {if (generic > 0) generic -= 1;}
 };
 
 class LambdaStatus : public IStatus {
-private:
-    std::string name;
-    std::function<void(Card&, RoundTracker&)> playAction;
-public:
-    LambdaStatus(std::string n, int c, std::function<void(Card&, RoundTracker&)> action) 
-        : IStatus(c), name(std::move(n)), playAction(std::move(action)) {}
-    
-    std::string getName() const override { return name; }
-    std::unique_ptr<IStatus> clone() const override { 
-        return std::make_unique<LambdaStatus>(name, charges, playAction); 
-    }
-    void onCardPlayed(Card& card, RoundTracker& state) override {
-        if (playAction) playAction(card, state);
-    }
+   private:
+	std::string name;
+	std::function<void(Card&, RoundTracker&)> playAction;
+	std::function<void(int&, int&, int&, int&, RoundTracker&)> costAction;
+	std::function<void(CardZone*&, RoundTracker&)> destAction;
+	std::function<bool(Card&, RoundTracker&)> canPlayAction;
+	std::function<void(int&, RoundTracker&)> scoreAction;
+	std::function<void(RoundTracker&)> appliedAction;
+    std::function<void(Card&, RoundTracker&)> drawAction;
+    std::function<void(int, int, int, RoundTracker&)> manaAction;
+
+   public:
+	// Much cleaner constructor!
+	LambdaStatus(std::string n, int c) : IStatus(c), name(std::move(n)) {}
+	
+	std::string getName() const override { return name; }
+	
+	std::unique_ptr<IStatus> clone() const override { 
+		auto clone = std::make_unique<LambdaStatus>(name, charges);
+		clone->setPlayAction(playAction).setCostAction(costAction).setDestAction(destAction)
+		     .setCanPlayAction(canPlayAction).setScoreAction(scoreAction).setAppliedAction(appliedAction).setDrawAction(drawAction).setManaAction(manaAction); 
+		return clone;
+	}
+
+	// Chainable Setters
+	LambdaStatus& setPlayAction(std::function<void(Card&, RoundTracker&)> action) { playAction = std::move(action); return *this; }
+	LambdaStatus& setCostAction(std::function<void(int&, int&, int&, int&, RoundTracker&)> action) { costAction = std::move(action); return *this; }
+	LambdaStatus& setDestAction(std::function<void(CardZone*&, RoundTracker&)> action) { destAction = std::move(action); return *this; }
+	LambdaStatus& setCanPlayAction(std::function<bool(Card&, RoundTracker&)> action) { canPlayAction = std::move(action); return *this; }
+	LambdaStatus& setScoreAction(std::function<void(int&, RoundTracker&)> action) { scoreAction = std::move(action); return *this; }
+	LambdaStatus& setAppliedAction(std::function<void(RoundTracker&)> action) { appliedAction = std::move(action); return *this; }
+    LambdaStatus& setDrawAction(std::function<void(Card&, RoundTracker&)> action) { drawAction = std::move(action); return *this; }
+    LambdaStatus& setManaAction(std::function<void(int, int, int, RoundTracker&)> action) { manaAction = std::move(action); return *this; }
+
+	// Interface Implementations
+	void onCardPlayed(Card& card, RoundTracker& state) override { if (playAction) playAction(card, state); }
+	void modifyCost(int& r, int& b, int& g, int& generic, RoundTracker& state) override { if (costAction) costAction(r, b, g, generic, state); }
+	void modifyDestination(CardZone*& destination, RoundTracker& state) override { if (destAction) destAction(destination, state); }
+	bool canPlayCard(Card& card, RoundTracker& state) override { return canPlayAction ? canPlayAction(card, state) : true; }
+	void modifyTargetScore(int& targetScore, RoundTracker& state) override { if (scoreAction) scoreAction(targetScore, state); }
+	void onApplied(RoundTracker& state) override { if (appliedAction) appliedAction(state); }
+    void onCardDrawn(Card& card, RoundTracker& state) override { if (drawAction) drawAction(card, state); }
+    void onManaAdded(int r, int b, int g, RoundTracker& state) override { if (manaAction) manaAction(r, b, g, state); }
 };

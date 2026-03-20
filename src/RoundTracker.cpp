@@ -10,6 +10,7 @@ void RoundTracker::drawCard() {
 	if (card) {
 		hand.addCard(card);
 		relics.triggerOnCardDrawn(*this);
+		for (const auto& status : activeStatuses) status->onCardDrawn(*card, *this);
 	} else isLost = true;
 }
 void RoundTracker::drawCards(int amount) {
@@ -56,6 +57,8 @@ void RoundTracker::startNewRound() {
 	currentScore = 0;
 	stormCount = 0;
 	targetScore = currentRun.calcTargetScore();
+	for (const auto& relic : relics.getRelicZone()) if (relic) relic->setDisabled(false); //TODO: once we add perishables or any permanent relic disables, wipe it off
+	for (const auto& status : activeStatuses) status->modifyTargetScore(targetScore, *this);
 	relics.triggerOnRoundStart(*this);
 }
 
@@ -65,33 +68,33 @@ void RoundTracker::addScore(int amount) {
 }
 
 void RoundTracker::addScoreToTarget(int amount) {
-//	relics.triggerOnDamageDealt(amount, *this);
 	targetScore+= amount;
 }
 void RoundTracker::addMana(int r, int b, int g) {
 	relics.triggerOnManaAdded(r, b, g, *this);
 	manaPool.addMana(r, b, g);
+	for (const auto& status : activeStatuses) status->onManaAdded(r, b, g, *this);
 }
-void RoundTracker::promptForManaColor(ManaPool& currentmanaPool,int nr) {
-    for(int i=0;i<nr;i++)
-	{char choice = ' ';
-    bool valid = false;
+void RoundTracker::promptForManaColor(int nr) {
+	for (int i = 0; i < nr; i++) {
+		char choice = ' ';
+		bool valid = false;
 
-    while (!valid) {
-        std::cout << "\n  --- CHOOSE A MANA COLOR -[R][G][B]:\n";
-        std::cin >> choice;
-        choice = std::toupper(choice);
-        if (choice == 'R' || choice == 'B' || choice == 'G') {
-            valid = true;
-        } else {
-            std::cout << "  [!] Invalid choice. Please type R, B, or G.\n";
-            std::cin.clear();
-            std::cin.ignore(10000, '\n'); 
-        }
-		
+		while (!valid) {
+			std::cout << "\n  --- CHOOSE A MANA COLOR -1.R 2.G 3.B:\n";
+			std::cin >> choice;
+			choice = std::toupper(choice);
+			if (choice == '1' || choice == '2' || choice == '3') valid = true;
+			else {
+				std::cout << "  [!] Invalid choice. Please type 1, 2, or 3.\n";
+				std::cin.clear();
+				std::cin.ignore(10000, '\n'); 
+			}
+		}
+		if (choice == '1') addMana(1, 0, 0);
+		if (choice == '2') addMana(0, 1, 0);
+		if (choice == '3') addMana(0, 0, 1);
 	}
-	currentmanaPool.addManaByColor(choice);
-}
 }
 int RoundTracker::getStormCount() const { return stormCount; }
 
@@ -117,35 +120,27 @@ void RoundTracker::setupDeck(const CardZone& library, const RelicZone& startingR
 	}
 
 	deck.shuffle();
-	// draw 5
-	for (int i = 0; i < 5; i++) {
-		drawCard();
-	}
+	for (int i = 0; i < 5; i++)	drawCard();
 	this->relics = startingRelics;
 }
 
 bool RoundTracker::playCardFromHand(int index) {
-	if (index < 0 || index >= hand.getSize()) {
-		return false;
-	}
+	if (index < 0 || index >= hand.getSize()) return false;
 
+	
 	std::shared_ptr<Card> card = hand.getCards()[index];
-
+	for (const auto& status : activeStatuses) if (!status->canPlayCard(*card, *this)) return false; // or return early depending on your void/bool signature
 	int r = card->getRedCost();
 	int b = card->getBlueCost();
 	int g = card->getGreenCost();
 	int gen = card->getGenericCost();
-	for (auto& status : activeStatuses) {
-		status->modifyCost(r, b, g, gen);
-	}
+	for (auto& status : activeStatuses) status->modifyCost(r, b, g, gen,*this);
 	if (manaPool.canAfford(r, b, g, gen)) {
 		manaPool.spendMana(r, b, g, gen);
 		card->play(*this);
 		stormCount++;
 		std::cout << "  --> Successfully played " << card->getName() << "!\n";
-		for (auto& status : activeStatuses) {
-			status->onCardPlayed(*card, *this);
-		}
+		for (auto& status : activeStatuses) status->onCardPlayed(*card, *this);
 		relics.triggerOnCardPlayed(*this);
 		
 		CardZone* targetZone = &graveyard; 
@@ -169,7 +164,7 @@ int RoundTracker::requestHandTarget() {
 	const auto& handCards = hand.getCards();
 	if (handCards.empty()) return -1;
 	std::cout << "\n  --- TARGET ---\n";
-for (size_t i = 0; i < handCards.size(); i++) std::cout << "  [" << (i + 1) << "] " << *handCards[i] << "\n";
+	for (size_t i = 0; i < handCards.size(); i++) std::cout << "  [" << (i + 1) << "] " << *handCards[i] << "\n";
 	std::cout << "  Select a card (1-" << handCards.size() << "): ";
 	return View::readInt(1, handCards.size()) - 1;
 }

@@ -21,7 +21,7 @@ void DiscardEffect::resolve(RoundTracker& state) {
 
 void AddManaEffect::resolve(RoundTracker& state) {
 	state.addMana(red, blue, green);
-	if(anycol) state.promptForManaColor(state.getManaPool(),anycol);
+	if(anycol) state.promptForManaColor(anycol);
 }
 
 void Score::resolve(RoundTracker& state) { state.addScore(baseScore); }
