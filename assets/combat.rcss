@@ -1,0 +1,305 @@
+/* =====================================================
+   combat.rcss  –  Combat screen layout & components
+   ===================================================== */
+
+#combat-layout {
+    width: 100%; 
+    height: 100%;
+    position: relative;
+}
+
+/* Base style for layout boxes */
+.layout-box {
+    box-sizing: border-box;
+    border: 2dp #aaaaaa;
+    background-color: #1a1a1a;
+}
+
+/* TOP LEFT: Menu Button */
+#btn-combat-menu {
+    position: absolute; 
+    top: 2%; 
+    left: 2%;
+    width: 6%; 
+    height: 8%;
+    font-size: 24px;
+    background-color: #333; 
+    border: 2dp #555;
+    padding: 0;
+    text-align: center;
+}
+
+/* LEFT COLUMN: Prompt */
+#combat-prompt {
+    position: absolute; 
+    top: 12%; 
+    left: 2%;
+    width: 24%; 
+    height: 35%;
+    box-sizing: border-box;
+    border: 2dp #aaaaaa;
+    background-color: #1a1a1a;
+    text-align: center; 
+    padding: 10px;
+}
+#combat-prompt p { 
+    margin: 5dp 0; 
+    font-size: 16px;
+    color: #ddd; 
+}
+
+/* LEFT COLUMN: Lights */
+#lights-panel {
+    position: absolute; 
+    top: 50%; 
+    left: 2%;
+    width: 24%; 
+    height: 10%;
+    box-sizing: border-box;
+    border: 2dp #aaaaaa;
+    text-align: center;
+    padding-top: 2%;
+}
+.light-container {
+    display: inline-block;
+    width: 30%;
+    text-align: center;
+}
+.light-circle {
+    display: inline-block;
+    width: 30px; 
+    height: 30px;
+    border-radius: 15px;
+    line-height: 30px; 
+    text-align: center;
+    font-weight: bold; 
+    color: white; 
+    border: 2dp #fff;
+    vertical-align: middle;
+}
+.light-circle.red   { background-color: #aa2222; }
+.light-circle.blue  { background-color: #2222aa; }
+.light-circle.green { background-color: #22aa22; }
+
+.light-count {
+    display: inline-block;
+    font-size: 20px; 
+    margin-left: 5px;
+    vertical-align: middle;
+}
+
+/* BOTTOM LEFT: Void & Graveyard */
+#void-section {
+    position: absolute; 
+    bottom: 2%; 
+    left: 2%;
+    width: 11%; 
+    height: 30%;
+    box-sizing: border-box;
+    border: 2dp #aaaaaa;
+    text-align: center;
+    padding-top: 10%;
+}
+
+#graveyard-section {
+    position: absolute; 
+    bottom: 2%; 
+    left: 14%;
+    width: 12%; 
+    height: 30%;
+    box-sizing: border-box;
+    border: 2dp #aaaaaa;
+    text-align: center;
+    padding-top: 10%;
+}
+
+/* CENTER: Boss Info */
+#boss-info {
+    position: absolute; 
+    top: 8%; 
+    left: 28%;
+    width: 30%; 
+    height: 45%;
+    box-sizing: border-box;
+    background-color: #2a1111;
+    border: 2dp #aa3333;
+    text-align: center; 
+    padding: 20px;
+}
+
+/* TOP RIGHT: Relics */
+#relic-section {
+    position: absolute; 
+    top: 2%; 
+    left: 60%; 
+    right: 2%;
+    height: 30%;
+    box-sizing: border-box;
+    background-color: rgba(0,0,0,0.5);
+    border: 2dp #aaaaaa;
+    padding: 10px; 
+}
+
+/* Relic buttons */
+.relic-wrapper {
+    display: inline-block;
+    position: relative;
+    margin: 4px;
+}
+.relic-btn {
+    display: inline-block;
+    width: auto;
+    min-width: 80px;
+    padding: 6px 10px;
+    font-size: 13px;
+    background-color: #2a2a3a;
+    border: 2dp #6666aa;
+    color: #ccd;
+}
+.relic-btn:hover {
+    background-color: #3a3a4a;
+    border-color: #aaaaff;
+}
+
+/* Activatable relics get a golden border */
+.relic-activatable {
+    border: 2dp #cc9900;
+    color: #ffdd88;
+}
+.relic-activatable:hover {
+    background-color: #3a3a22;
+    border-color: #ffcc00;
+}
+
+/* BOTTOM CENTER/RIGHT: Hand */
+#hand-section {
+    position: absolute; 
+    bottom: 2%; 
+    left: 28%; 
+    right: 2%;
+    height: 40%;
+    box-sizing: border-box;
+    border: 2dp #aaaaaa;
+    text-align: center;
+    padding: 10px;
+}
+
+#hand-container {
+    min-height: 220px;
+}
+
+/* =====================================================
+   Relic Tooltip
+   ===================================================== */
+.relic-tooltip {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 200px;
+    background-color: #111122;
+    border: 2dp #8888cc;
+    padding: 10px;
+    z-index: 20;
+}
+.relic-wrapper:hover .relic-tooltip {
+    display: block;
+}
+.relic-tooltip-name {
+    display: block;
+    font-size: 15px;
+    font-weight: bold;
+    color: #ffdd88;
+    margin-bottom: 6px;
+}
+.relic-tooltip-desc {
+    display: block;
+    font-size: 13px;
+    color: #cccccc;
+    margin-bottom: 10px;
+}
+.tooltip-sell {
+    display: block;
+    width: 100%;
+    background-color: #4a1111;
+    border: 2dp #882222;
+    color: #ff9999;
+    font-size: 14px;
+    padding: 6px;
+    margin: 0 auto;
+}
+.tooltip-sell:hover {
+    background-color: #661111;
+    border-color: #cc4444;
+}
+
+/* =====================================================
+   Graveyard / Void Cards
+   ===================================================== */
+#void-container, #graveyard-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+}
+
+.small-card-wrapper {
+    position: absolute;
+    top: -140px;
+    left: -100px;
+    transform: scale(0.66);
+    transform-origin: center center;
+}
+
+/* =====================================================
+   Combat Pause Menu Overlay
+   ===================================================== */
+#combat-menu-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.75);
+    z-index: 30;
+}
+#combat-menu-overlay .modal-box {
+    width: 280px;
+    margin: 15% auto;
+    background-color: #1c1c2e;
+    border: 2dp #5555aa;
+    padding: 30px;
+    text-align: center;
+}
+#combat-menu-overlay h2 {
+    font-size: 28px;
+    color: #aaaaff;
+    margin-bottom: 20px;
+}
+#btn-menu-resume {
+    background-color: #223322;
+    border: 2dp #448844;
+    color: #99ff99;
+    margin-bottom: 10px;
+}
+#btn-menu-resume:hover {
+    background-color: #335533;
+    border-color: #66cc66;
+}
+#btn-menu-restart {
+    background-color: #222244;
+    border: 2dp #4444aa;
+    color: #aaaaff;
+    margin-bottom: 10px;
+}
+#btn-menu-restart:hover {
+    background-color: #333366;
+    border-color: #6666cc;
+}
+#btn-menu-quit {
+    background-color: #2a1111;
+    border: 2dp #884444;
+    color: #ff9999;
+}
+#btn-menu-quit:hover {
+    background-color: #441111;
+    border-color: #cc6666;
+}

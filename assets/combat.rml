@@ -1,0 +1,111 @@
+<rml>
+<head>
+    <title>Combat</title>
+    <link type="text/rcss" href="style.rcss"/>
+    <link type="text/rcss" href="combat.rcss"/>
+    <link type="text/rcss" href="card.rcss"/>
+</head>
+<body class="window">
+    <div id="combat-layout">
+        
+        <button id="btn-combat-menu">☰</button>
+        
+        <div id="combat-prompt">
+            <p id="prompt-line-1">Awaiting Action...</p>
+            <p id="prompt-line-2"></p>
+            <p id="prompt-line-3"></p>
+            
+            <div id="inline-mana-prompt" style="display: none;">
+                <p style="margin-top: 15px; color: #ffdd88;">Select Mana Color</p>
+                <div class="mana-options">
+                    <button class="mana-btn red" id="mana-red">RED</button>
+                    <button class="mana-btn blue" id="mana-blue">BLUE</button>
+                    <button class="mana-btn green" id="mana-green">GREEN</button>
+                </div>
+            </div>
+            
+            <div id="inline-x-prompt" style="display: none; margin-top: 15px;">
+                <p style="color: #ffdd88; margin-bottom: 5px;">Choose X</p>
+                <div style="display: block; margin: 5px auto;">
+                    <button class="mana-btn red" id="btn-x-minus" style="display:inline-block; width: 40px; padding: 5px;">-</button>
+                    <span id="x-value-display" style="display:inline-block; font-size: 24px; margin: 0 10px; width: 30px;">0</span>
+                    <button class="mana-btn green" id="btn-x-plus" style="display:inline-block; width: 40px; padding: 5px;">+</button>
+                </div>
+                <button id="btn-x-confirm" style="display:block; width: 80%; margin: 10px auto; background-color: #22a; border: 2dp #44c; padding: 5px;">Confirm</button>
+            </div>
+            
+            <div id="inline-yesno-prompt" style="display: none; margin-top: 15px;">
+                <p id="yesno-message" style="color: #ffdd88; margin-bottom: 5px;">Yes or No?</p>
+                <div style="display: block; margin: 5px auto;">
+                    <button id="btn-yes" style="display:inline-block; width: 45%; margin-right: 2%; background-color: #2a2; border: 2dp #4c4; padding: 5px; color: white;">Yes</button>
+                    <button id="btn-no" style="display:inline-block; width: 45%; background-color: #a22; border: 2dp #c44; padding: 5px; color: white;">No</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="lights-panel">
+            <div class="light-container">
+                <div class="light-circle red">R</div>
+                <span class="light-count" id="count-light-red">0</span>
+            </div>
+            <div class="light-container">
+                <div class="light-circle blue">B</div>
+                <span class="light-count" id="count-light-blue">0</span>
+            </div>
+            <div class="light-container">
+                <div class="light-circle green">G</div>
+                <span class="light-count" id="count-light-green">0</span>
+            </div>
+        </div>
+
+        <div id="void-section">
+            <h3 id="void-title">VOID</h3>
+            <div id="void-container"></div>
+        </div>
+        
+        <div id="graveyard-section">
+            <h3 id="graveyard-title">GRAVEYARD</h3>
+            <div id="graveyard-container"></div>
+        </div>
+
+        <div id="boss-info">
+            <h3>BOSS info</h3>
+            <p>(Empty for now)</p>
+        </div>
+
+        <div id="relic-section">
+            <p>Relics</p>
+            <div id="relic-container"></div>
+        </div>
+
+        <div id="hand-section">
+            <p>HAND</p>
+            <div id="hand-container"></div>
+        </div>
+
+
+
+
+
+        <!-- Pile viewer overlay -->
+        <div id="pile-view-bg" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10;">
+            <button id="btn-close-pile-view" style="position: absolute; top:0; left:0; width:100%; height:100%; background: transparent; border: none;"></button>
+            <div id="pile-view-content" style="position: absolute; top: 8%; left: 28%; width: 30%; height: 45%; box-sizing: border-box; background-color: #1a1a2a; border: 2dp #4444aa; text-align: center; padding: 20px; overflow-y: auto;">
+                <h3 id="pile-view-title" style="margin-bottom: 20px;">GRAVEYARD</h3>
+                <div id="pile-view-cards" style="display: block; position: relative;"></div>
+            </div>
+        </div>
+
+        <!-- Combat Pause Menu Overlay -->
+        <div id="combat-menu-overlay" style="display: none;">
+            <div class="modal-box">
+                <h2>Paused</h2>
+                <button id="btn-menu-resume">Resume</button>
+                <button id="btn-menu-restart">Restart</button>
+                <button id="btn-menu-quit">Quit to Title</button>
+            </div>
+        </div>
+
+    </div>
+</body>
+</rml>

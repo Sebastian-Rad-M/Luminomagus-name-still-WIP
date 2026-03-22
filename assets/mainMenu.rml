@@ -1,0 +1,14 @@
+<rml>
+<head>
+    <title>Main Menu</title>
+    <link type="text/rcss" href="style.rcss"/>
+</head>
+<body class="window">
+    <div id="main-menu-container">
+        <h1>LUMINOMAGUS</h1>
+        
+        <button id="btn-new-run">New Run</button>
+        <button id="btn-quit">Quit</button>
+    </div>
+</body>
+</rml>

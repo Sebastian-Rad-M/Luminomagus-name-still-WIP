@@ -1,0 +1,31 @@
+<rml>
+<head>
+    <title>The Merchant</title>
+    <link type="text/rcss" href="style.rcss"/>
+    <link type="text/rcss" href="card.rcss"/>
+</head>
+<body class="window">
+    <div id="shop-container">
+        <h1>THE MERCHANT</h1>
+        <h2 id="player-gold">Gold: 0G</h2>
+
+        <div class="shop-columns">
+            <div class="column">
+                <h3>Cards</h3>
+                <div id="card-stock"></div>
+            </div>
+            <div class="column">
+                <h3>Relics</h3>
+                <div id="relic-stock"></div>
+            </div>
+        </div>
+
+        <div id="sell-section">
+            <h3>Your Relics (Click to Sell)</h3>
+            <div id="player-relics-sell"></div>
+        </div>
+
+        <button id="btn-leave-shop">Leave Shop</button>
+    </div>
+</body>
+</rml>

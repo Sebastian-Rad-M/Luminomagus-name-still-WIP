@@ -1,0 +1,11 @@
+<div class="card [CARD_CLASS]">
+    <div class="card-header">
+        <div class="card-name">[NAME]</div>
+        <div class="card-costs">
+            [MANA_COSTS]
+        </div>
+    </div>
+
+    <div class="card-art-window">hello</div>
+
+</div>

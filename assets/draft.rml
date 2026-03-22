@@ -1,0 +1,16 @@
+<rml>
+<head>
+    <title>Draft Phase</title>
+    <link type="text/rcss" href="style.rcss"/>
+    <link type="text/rcss" href="card.rcss"/>
+</head>
+<body class="window">
+    <div id="draft-container">
+        <h1 id="draft-title">DRAFT PHASE</h1>
+        <p>Choose 5 cards from this pool to form your starting deck.</p>
+        
+        <div id="card-pool">
+        </div>
+    </div>
+</body>
+</rml>
