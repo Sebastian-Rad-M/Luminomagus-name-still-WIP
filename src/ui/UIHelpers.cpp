@@ -26,7 +26,11 @@ namespace UIHelpers {
     std::string GenerateCardRML(const std::string& templateRML, const Card& card) {
         std::string result = templateRML;
         result = ReplaceAll(result, "[NAME]", card.getName());
-        
+        std::string cardText = card.getText();
+            if (cardText.empty()) {
+                cardText = "No description available for this card.";
+            }
+            result = ReplaceAll(result, "[TEXT]", cardText);
         std::string cardClass = "card-generic";
         if (card.getRedCost() > 0) cardClass = "card-red";
         else if (card.getBlueCost() > 0) cardClass = "card-blue";

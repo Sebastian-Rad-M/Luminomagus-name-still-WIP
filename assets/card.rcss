@@ -37,9 +37,22 @@
 }
 .mana-icon {
     display: inline-block;
-    width: 16px; 
-    height: 16px;
-    margin-left: 2px;
+    
+    /* 1. Increase the box size */
+    width: 30dp; 
+    height: 30dp; 
+    
+    /* 2. RmlUi needs line-height to exactly match height for vertical centering */
+    line-height: 30dp; 
+    
+    /* 3. Increase the font size explicitly */
+    font-size: 20dp; 
+    font-weight: bold;
+    text-align: center;
+    
+    border-radius: 15dp; 
+    
+    margin-right: 2dp; /* Space between multiple mana symbols */
 }
 .icon-0 { decorator: image(mana-0); }
 .icon-1 { decorator: image(mana-1); }
@@ -94,6 +107,7 @@ div.card-wrapper:hover .card {
 
 .card {
     display: block;
+    position: relative;
     width: 200px;
     height: 280px;
     border-width: 2px;
@@ -107,7 +121,7 @@ div.card-wrapper:hover .card {
 .card-blue { background-color: #1a1a4a; border-color: #3333cc; }
 .card-green { background-color: #1a4a1a; border-color: #33cc33; }
 .card-generic { background-color: #333333; border-color: #aaaaaa; }
-
+/*
 .mana-icon {
     display: inline-block;
     width: 16px; 
@@ -120,7 +134,7 @@ div.card-wrapper:hover .card {
     font-weight: bold;
     color: white;
 }
-
+*/
 .icon-generic { image-color: #888888; }
 .icon-red { image-color: #d32f2f; }
 .icon-blue { image-color: #1976d2; }
@@ -162,4 +176,29 @@ div.card-wrapper:hover .card {
     height: 200px; 
     background-color: #ff00ff; 
     color: #ff00ff; 
+}
+.card-tooltip {
+    position: absolute;
+    top: 100%; /* Pushes the tooltip to appear below the card */
+    left: 0;
+    width: 180px;
+    background-color: rgba(20, 20, 30, 0.95);
+    border: 2dp #8888cc;
+    padding: 10px;
+    color: #dddddd;
+    font-size: 14px;
+    text-align: left;
+    z-index: 100;
+    
+    /* Hidden by default */
+    opacity: 0;
+    /* When hiding, fade out quickly with no delay */
+    transition: opacity 0.1s linear 0s; 
+}
+
+/* When the user hovers over the card, change opacity to 1, but wait 1.0 seconds first! */
+.card:hover .card-tooltip {
+    opacity: 1;
+    /* property | duration | easing | delay */
+    transition: opacity 0.15s linear 1s; 
 }

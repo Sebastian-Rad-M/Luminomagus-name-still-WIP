@@ -1,305 +1,319 @@
 /* =====================================================
-   combat.rcss  –  Combat screen layout & components
+   combat.rcss  –  Combat screen flex layout
    ===================================================== */
-
+@spritesheet status-icons {
+    src: lightSprites.png;
+    icon-echo:  32px 96px 32px 32px;
+    icon-score: 64px 96px 32px 32px;
+    icon-deck:  96px 96px 32px 32px;
+}
+/* --- Layout Base --- */
 #combat-layout {
-    width: 100%; 
+    display: flex;
+    width: 100%;
     height: 100%;
-    position: relative;
+    padding: 2%;
+    box-sizing: border-box;
+    gap: 2%;
 }
 
-/* Base style for layout boxes */
-.layout-box {
+.panel {
     box-sizing: border-box;
     border: 2dp #aaaaaa;
     background-color: #1a1a1a;
 }
 
-/* TOP LEFT: Menu Button */
+/* --- Left Sidebar Grid --- */
+#sidebar {
+    width: 25%;
+    display: flex;
+    flex-direction: column;
+    gap: 2%;
+}
+
 #btn-combat-menu {
-    position: absolute; 
-    top: 2%; 
-    left: 2%;
-    width: 6%; 
-    height: 8%;
+    width: 25%;
     font-size: 24px;
     background-color: #333; 
     border: 2dp #555;
-    padding: 0;
     text-align: center;
+    padding: 5px;
 }
 
-/* LEFT COLUMN: Prompt */
 #combat-prompt {
-    position: absolute; 
-    top: 12%; 
-    left: 2%;
-    width: 24%; 
-    height: 35%;
-    box-sizing: border-box;
-    border: 2dp #aaaaaa;
-    background-color: #1a1a1a;
+    flex: 1; /* Grows to fill available space */
     text-align: center; 
     padding: 10px;
 }
 #combat-prompt p { 
     margin: 5dp 0; 
     font-size: 16px;
-    color: #ddd; 
+    color: #ddd;
 }
 
-/* LEFT COLUMN: Lights */
 #lights-panel {
-    position: absolute; 
-    top: 50%; 
-    left: 2%;
-    width: 24%; 
-    height: 10%;
-    box-sizing: border-box;
-    border: 2dp #aaaaaa;
-    text-align: center;
-    padding-top: 2%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px;
 }
-.light-container {
-    display: inline-block;
-    width: 30%;
-    text-align: center;
+
+#discard-piles {
+    display: flex;
+    gap: 5%;
+    height: 33%; 
 }
+.pile-panel {
+    flex: 1;
+    text-align: center;
+    padding-top: 10px;
+    position: relative;
+}
+
+/* --- Main Area Grid --- */
+#main-area {
+    flex: 1; /* Takes up remaining width */
+    display: flex;
+    flex-direction: column;
+    gap: 2%;
+}
+
+#top-main-area {
+    display: flex;
+    gap: 2%;
+    height: 45%;
+}
+
+.boss-panel {
+    flex: 1;
+    background-color: #2a1111;
+    border-color: #aa3333;
+    text-align: center; 
+    position: relative;
+    overflow: hidden;
+    padding: 20px;
+}
+
+.relic-panel {
+    flex: 1;
+    background-color: rgba(0,0,0,0.5);
+    padding: 10px; 
+}
+
+#hand-section {
+    flex: 1; /* Fills remaining height */
+    text-align: center;
+    padding: 10px;
+    position: relative;
+}
+#hand-container {
+    min-height: 220px;
+    display: flex;
+    justify-content: center;
+    gap: -30px; /* Adjust for overlapping cards if necessary */
+}
+
+/* --- Inline Prompts --- */
+.inline-prompt { margin-top: 15px; }
+.prompt-title { color: #ffdd88 !important; margin-bottom: 5px !important; }
+
+.btn-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin: 5px auto;
+}
+
+.small-btn { width: 40px; padding: 5px; }
+#x-value-display { font-size: 24px; width: 30px; text-align: center; }
+
+.confirm-btn {
+    width: 80%;
+    margin: 10px auto;
+    background-color: #22a;
+    border: 2dp #44c;
+    padding: 5px;
+}
+
+.yes-btn, .no-btn {
+    width: 45%;
+    padding: 5px;
+    color: white;
+}
+.yes-btn { background-color: #2a2; border: 2dp #4c4; }
+.no-btn { background-color: #a22; border: 2dp #c44; }
+
+
+/* --- Lights --- */
+.light-container { text-align: center; }
 .light-circle {
     display: inline-block;
-    width: 30px; 
-    height: 30px;
+    width: 30px; height: 30px;
     border-radius: 15px;
-    line-height: 30px; 
-    text-align: center;
-    font-weight: bold; 
-    color: white; 
-    border: 2dp #fff;
+    line-height: 30px; text-align: center;
+    font-weight: bold; color: white; border: 2dp #fff;
     vertical-align: middle;
 }
 .light-circle.red   { background-color: #aa2222; }
 .light-circle.blue  { background-color: #2222aa; }
 .light-circle.green { background-color: #22aa22; }
+.light-count { font-size: 20px; margin-left: 5px; vertical-align: middle; }
 
-.light-count {
-    display: inline-block;
-    font-size: 20px; 
-    margin-left: 5px;
-    vertical-align: middle;
-}
-
-/* BOTTOM LEFT: Void & Graveyard */
-#void-section {
-    position: absolute; 
-    bottom: 2%; 
-    left: 2%;
-    width: 11%; 
-    height: 30%;
-    box-sizing: border-box;
-    border: 2dp #aaaaaa;
-    text-align: center;
-    padding-top: 10%;
-}
-
-#graveyard-section {
-    position: absolute; 
-    bottom: 2%; 
-    left: 14%;
-    width: 12%; 
-    height: 30%;
-    box-sizing: border-box;
-    border: 2dp #aaaaaa;
-    text-align: center;
-    padding-top: 10%;
-}
-
-/* CENTER: Boss Info */
-#boss-info {
-    position: absolute; 
-    top: 8%; 
-    left: 28%;
-    width: 30%; 
-    height: 45%;
-    box-sizing: border-box;
-    background-color: #2a1111;
-    border: 2dp #aa3333;
-    text-align: center; 
-    padding: 20px;
-}
-
-/* TOP RIGHT: Relics */
-#relic-section {
-    position: absolute; 
-    top: 2%; 
-    left: 60%; 
-    right: 2%;
-    height: 30%;
-    box-sizing: border-box;
-    background-color: rgba(0,0,0,0.5);
-    border: 2dp #aaaaaa;
-    padding: 10px; 
-}
-
-/* Relic buttons */
+/* --- Relics --- */
 .relic-wrapper {
     display: inline-block;
     position: relative;
     margin: 4px;
 }
 .relic-btn {
-    display: inline-block;
-    width: auto;
-    min-width: 80px;
-    padding: 6px 10px;
-    font-size: 13px;
-    background-color: #2a2a3a;
-    border: 2dp #6666aa;
-    color: #ccd;
+    min-width: 80px; padding: 6px 10px; font-size: 13px;
+    background-color: #2a2a3a; border: 2dp #6666aa; color: #ccd;
 }
-.relic-btn:hover {
-    background-color: #3a3a4a;
-    border-color: #aaaaff;
-}
+.relic-btn:hover { background-color: #3a3a4a; border-color: #aaaaff; }
+.relic-activatable { border: 2dp #cc9900; color: #ffdd88; }
+.relic-activatable:hover { background-color: #3a3a22; border-color: #ffcc00; }
 
-/* Activatable relics get a golden border */
-.relic-activatable {
-    border: 2dp #cc9900;
-    color: #ffdd88;
-}
-.relic-activatable:hover {
-    background-color: #3a3a22;
-    border-color: #ffcc00;
-}
-
-/* BOTTOM CENTER/RIGHT: Hand */
-#hand-section {
-    position: absolute; 
-    bottom: 2%; 
-    left: 28%; 
-    right: 2%;
-    height: 40%;
-    box-sizing: border-box;
-    border: 2dp #aaaaaa;
-    text-align: center;
-    padding: 10px;
-}
-
-#hand-container {
-    min-height: 220px;
-}
-
-/* =====================================================
-   Relic Tooltip
-   ===================================================== */
 .relic-tooltip {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 200px;
-    background-color: #111122;
-    border: 2dp #8888cc;
-    padding: 10px;
-    z-index: 20;
+    display: none; position: absolute; top: 100%; left: 0;
+    width: 200px; background-color: #111122; border: 2dp #8888cc;
+    padding: 10px; z-index: 20;
 }
-.relic-wrapper:hover .relic-tooltip {
-    display: block;
-}
-.relic-tooltip-name {
-    display: block;
-    font-size: 15px;
-    font-weight: bold;
-    color: #ffdd88;
-    margin-bottom: 6px;
-}
-.relic-tooltip-desc {
-    display: block;
-    font-size: 13px;
-    color: #cccccc;
-    margin-bottom: 10px;
-}
+.relic-wrapper:hover .relic-tooltip { display: block; }
+.relic-tooltip-name { display: block; font-size: 15px; font-weight: bold; color: #ffdd88; margin-bottom: 6px; }
+.relic-tooltip-desc { display: block; font-size: 13px; color: #cccccc; margin-bottom: 10px; }
 .tooltip-sell {
-    display: block;
-    width: 100%;
-    background-color: #4a1111;
-    border: 2dp #882222;
-    color: #ff9999;
-    font-size: 14px;
-    padding: 6px;
-    margin: 0 auto;
+    display: block; width: 100%; background-color: #4a1111;
+    border: 2dp #882222; color: #ff9999; font-size: 14px;
+    padding: 6px; margin: 0 auto;
 }
-.tooltip-sell:hover {
-    background-color: #661111;
-    border-color: #cc4444;
-}
+.tooltip-sell:hover { background-color: #661111; border-color: #cc4444; }
 
-/* =====================================================
-   Graveyard / Void Cards
-   ===================================================== */
+/* --- Graveyard / Void Small Cards --- */
 #void-container, #graveyard-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
+    display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;
 }
-
 .small-card-wrapper {
-    position: absolute;
-    top: -140px;
-    left: -100px;
     transform: scale(0.66);
     transform-origin: center center;
 }
 
-/* =====================================================
-   Combat Pause Menu Overlay
-   ===================================================== */
-#combat-menu-overlay {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
+/* --- Overlays & Modals --- */
+.overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     background-color: rgba(0,0,0,0.75);
     z-index: 30;
 }
-#combat-menu-overlay .modal-box {
+
+/* This guarantees contents stay centered even when C++ toggles block display */
+.overlay-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%; height: 100%;
+}
+
+.invisible-close {
+    position: absolute; top:0; left:0; width:100%; height:100%;
+    background: transparent; border: none; z-index: 1;
+}
+
+.modal-box {
+    position: relative; z-index: 2;
+    background-color: #1c1c2e; border: 2dp #5555aa;
+    padding: 30px; text-align: center;
     width: 280px;
-    margin: 15% auto;
+}
+
+.modal-large {
+    width: 50%; height: 70%;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-box h2 { font-size: 28px; color: #aaaaff; margin-bottom: 20px; }
+.modal-box h3 { margin-bottom: 20px; }
+
+/* Flexible grid for C++ generated cards */
+.card-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    overflow-y: auto;
+    flex: 1;
+}
+#pile-view-bg {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
     background-color: #1c1c2e;
-    border: 2dp #5555aa;
-    padding: 30px;
-    text-align: center;
+    z-index: 10;
 }
-#combat-menu-overlay h2 {
-    font-size: 28px;
-    color: #aaaaff;
-    margin-bottom: 20px;
+
+#pile-view-content {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    /* The 40px top padding pushes the Title and Cards down initially, 
+       but allows them to scroll up *under* the absolute button. */
+    padding: 40px 10px 10px 10px; 
+    overflow-y: auto; 
 }
-#btn-menu-resume {
-    background-color: #223322;
-    border: 2dp #448844;
-    color: #99ff99;
-    margin-bottom: 10px;
+
+#pile-view-title {
+    margin-top: 0;
+    margin-bottom: 15px;
 }
-#btn-menu-resume:hover {
-    background-color: #335533;
-    border-color: #66cc66;
+
+#btn-close-pile-view {
+    position: absolute;
+    top: 5px;
+    right: 15px;  /* Inset slightly so it doesn't overlap the scrollbar */
+    z-index: 100; /* Forces it to the front */
+    background-color: #a22;
+    border: 2dp #c44;
+    color: white;
+    padding: 4px 8px;
+    font-size: 14px;
+    font-weight: bold;
 }
-#btn-menu-restart {
-    background-color: #222244;
-    border: 2dp #4444aa;
-    color: #aaaaff;
-    margin-bottom: 10px;
+
+#btn-close-pile-view:hover {
+    background-color: #c44;
 }
-#btn-menu-restart:hover {
-    background-color: #333366;
-    border-color: #6666cc;
+/* --- Status Panel --- */
+#status-panel {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px 5px;
 }
-#btn-menu-quit {
-    background-color: #2a1111;
-    border: 2dp #884444;
-    color: #ff9999;
+
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
-#btn-menu-quit:hover {
-    background-color: #441111;
-    border-color: #cc6666;
+
+.status-icon {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
 }
+
+.status-icon.echo  { decorator: image(icon-echo); }
+.status-icon.score { decorator: image(icon-score); }
+.status-icon.deck  { decorator: image(icon-deck); }
+
+#count-echo, #count-score, #count-deck {
+    font-size: 18px;
+    font-weight: bold;
+    color: #ffffff;
+}
+.menu-btn { display: block; width: 100%; padding: 10px; margin-bottom: 10px; font-size: 16px; }
+.menu-resume { background-color: #223322; border: 2dp #448844; color: #99ff99; }
+.menu-resume:hover { background-color: #335533; border-color: #66cc66; }
+.menu-restart { background-color: #222244; border: 2dp #4444aa; color: #aaaaff; }
+.menu-restart:hover { background-color: #333366; border-color: #6666cc; }
+.menu-quit { background-color: #2a1111; border: 2dp #884444; color: #ff9999; margin-bottom: 0; }
+.menu-quit:hover { background-color: #441111; border-color: #cc6666; }

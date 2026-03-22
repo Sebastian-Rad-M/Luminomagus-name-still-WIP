@@ -14,12 +14,13 @@ Card::Card(const std::string& name, const int genericCost, const int redCost, co
 	: name(std::move(name)),genericCost(genericCost),redCost(redCost),blueCost(blueCost),greenCost(greenCost),rarity(rarity),mod(mod) {}
 
 Card::Card(const Card& other)
-	: name(other.name),genericCost(other.genericCost),redCost(other.redCost),blueCost(other.blueCost),greenCost(other.greenCost),rarity(other.rarity),mod(other.mod) 
-	{for (const auto& effect : other.effects)effects.push_back(effect->clone());}
+	: name(other.name), text(other.text),genericCost(other.genericCost),redCost(other.redCost),blueCost(other.blueCost),greenCost(other.greenCost),rarity(other.rarity),mod(other.mod) 
+{for (const auto& effect : other.effects) effects.push_back(effect->clone());}
 
 Card& Card::operator=(const Card& other) {
 	if (this != &other) {
 		name = other.name;
+		text = other.text;
 		genericCost = other.genericCost;
 		redCost = other.redCost;
 		blueCost = other.blueCost;

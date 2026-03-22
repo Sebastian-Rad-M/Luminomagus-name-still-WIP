@@ -51,32 +51,32 @@ void CombatListener::refreshUI() {
     
     // Top prompts
     if (auto el = combatDoc->GetElementById("prompt-line-1")) el->SetInnerRML("Round " + std::to_string(activeRun.getCurrentRound()));
-    if (auto el = combatDoc->GetElementById("prompt-line-2")) el->SetInnerRML("Score: " + std::to_string(round.getCurrentScore()) + "/" + std::to_string(round.getTargetScore()));
-
-    // Mana / X prompt overlays
-    if (auto overlay = combatDoc->GetElementById("inline-mana-prompt")) overlay->SetProperty("display", (round.getPendingManaChoices() > 0 && !round.isXPromptActive() && !round.isYesNoPromptActive()) ? "block" : "none");
-    if (auto overlay = combatDoc->GetElementById("inline-x-prompt")) {
-        overlay->SetProperty("display", (round.isXPromptActive() && !round.isYesNoPromptActive()) ? "block" : "none");
-        if (round.isXPromptActive()) 
-            if (auto xVal = combatDoc->GetElementById("x-value-display")) xVal->SetInnerRML(std::to_string(pendingXValue));
-    }
-    if (auto overlay = combatDoc->GetElementById("inline-yesno-prompt")) {
-        overlay->SetProperty("display", round.isYesNoPromptActive() ? "block" : "none");
-        if (round.isYesNoPromptActive()) 
-            if (auto msg = combatDoc->GetElementById("yesno-message"))  msg->SetInnerRML(round.getYesNoMessage());
-    }
+    
+    // Set the prompt message (this fixes your old bug where Score was overwritten by prompts)
     if (auto line2 = combatDoc->GetElementById("prompt-line-2")) {
         line2->SetInnerRML(round.getPromptMessage());
     }
 
-    // Deck / Storm / Boss line
-    if (auto el = combatDoc->GetElementById("prompt-line-3")) {
-        std::string bossName = round.getActiveBossName();
-        std::string info = "Deck: " + std::to_string(round.getDeck().getSize()) + " | Storm: " + std::to_string(round.getStormCount());
-        if (!bossName.empty()) info += " | Boss: " + bossName;
-        el->SetInnerRML(info);
+    // Populate the new Status Panel!
+    if (auto el = combatDoc->GetElementById("count-echo")) {
+        el->SetInnerRML(std::to_string(round.getStormCount()));
+    }
+    if (auto el = combatDoc->GetElementById("count-score")) {
+        el->SetInnerRML(std::to_string(round.getCurrentScore()) + "/" + std::to_string(round.getTargetScore()));
+    }
+    if (auto el = combatDoc->GetElementById("count-deck")) {
+        el->SetInnerRML(std::to_string(round.getDeck().getSize()));
     }
 
+    // Populate the Boss Info directly into the right-side panel
+    if (auto el = combatDoc->GetElementById("boss-name-display")) {
+        std::string bossName = round.getActiveBossName();
+        if (bossName.empty()) {
+            el->SetInnerRML("No Boss Active");
+        } else {
+            el->SetInnerRML(bossName);
+        }
+    }
     // ── Pile View / Selection Modal ───────────────────────────────────────────
     bool showSelection = round.isCardSelectionPromptActive();
     bool showPile = activePileView != PileView::NONE;
@@ -313,14 +313,19 @@ void CombatListener::ProcessEvent(Rml::Event& event) {
     }
 
     // Don't process game events while menu or a blocking modal is open
-    if (menuOpen || activePileView != PileView::NONE || roundOpt.value().isCardSelectionPromptActive()) return;
+    if (menuOpen || roundOpt.value().isCardSelectionPromptActive()) return;
+
+    // If the user takes a valid game action while the pile viewer is open, auto-close it!
+    if (activePileView != PileView::NONE) {
+        activePileView = PileView::NONE;
+    }
 
     if (!roundOpt.has_value()) return;
     auto& round = roundOpt.value();
     auto& activeRun = GameManager::instance().getActiveRun();
 
     // ── Relic mouse events ────────────────────────────────────────────────────
-    if (id.find("relic-") == 0) {
+    if (id.find("relic-") == 0 && id.find("wrapper") == std::string::npos && id.find("container") == std::string::npos) {
         int index = std::stoi(id.substr(6));
 
         // Click: activate if activatable

@@ -72,10 +72,10 @@ std::shared_ptr<IRelic> RelicDatabase::getRandomRelic() {
         char r = pair.second->getRarity();
 
        if (r == 'B') continue;  
-        if (r == 'C') totalWeight += 60;  
-        if (r == 'U') totalWeight += 30;  
-        if (r == 'R') totalWeight += 10;  
-        if (r == 'L') totalWeight += 1;
+        if (r == 'C') currentWeight += 60;  
+        if (r == 'U')currentWeight += 30;  
+        if (r == 'R') currentWeight += 10;  
+        if (r == 'L') currentWeight += 1;
         if (currentWeight >= winningTicket) return pair.second->clone();
     }
 

@@ -8,4 +8,5 @@
 
     <div class="card-art-window">hello</div>
 
+    <div class="card-tooltip">[TEXT]</div>
 </div>
