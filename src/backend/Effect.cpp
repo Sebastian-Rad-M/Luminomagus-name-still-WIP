@@ -4,10 +4,19 @@
 void DrawCardEffect::resolve(RoundTracker& state) {
 	for (int i = 0; i < amount; i++) state.drawCard();
 	}
-
+//TODO: make it not break.
 void DiscardEffect::resolve(RoundTracker& state) {
-	for (int i = 0; i < amount; i++) if (!state.promptDiscard()) break;
-	}
+    struct Loop {
+        static void step(RoundTracker& s, int remaining) {
+            if (remaining <= 0 || s.getHand().getCards().empty()) return;
+            s.promptDiscard([remaining](int idx, RoundTracker& st) {
+                if (idx >= 0) step(st, remaining - 1);
+                else step(st, remaining);
+            });
+        }
+    };
+    Loop::step(state, amount);
+}
 
 void AddManaEffect::resolve(RoundTracker& state) {
 	state.addMana(red, blue, green);

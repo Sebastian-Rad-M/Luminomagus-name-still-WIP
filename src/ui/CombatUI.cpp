@@ -96,6 +96,14 @@ void CombatListener::refreshUI() {
             el->SetInnerRML(bossName);
         }
     }
+    if (auto el = combatDoc->GetElementById("boss-desc-display")) {
+        std::string bossDesc = round.getActiveBossDescription();
+        if (bossDesc.empty()) {
+            el->SetInnerRML("Standard rules apply this round.");
+        } else {
+            el->SetInnerRML(bossDesc);
+        }
+    }
     // ── Pile View / Selection Modal ───────────────────────────────────────────
     bool showSelection = round.isCardSelectionPromptActive();
     bool showPile = activePileView != PileView::NONE;

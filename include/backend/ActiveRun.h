@@ -5,7 +5,7 @@
 class ActiveRun {
    private:
 	PlayerInfo player;
-	Shop currentShop; //TODO:move shop from here
+	Shop currentShop; 
 	int currentRound;
 	int roundsWon;
 

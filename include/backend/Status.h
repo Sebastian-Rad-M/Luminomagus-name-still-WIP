@@ -10,7 +10,8 @@ class CardZone;
 class IStatus {
 protected:
     int charges=1;
-    std::string name="None";
+    std::string name="";
+    std::string description="";
     bool m_isBoss = false;
 
 public:
@@ -19,6 +20,8 @@ public:
     IStatus(std::string N) : name(N) {}
     virtual ~IStatus() = default;  
     std::string getName() {return name;};
+    std::string getDescription() {return description;} 
+    void setDescription(const std::string& desc) { description = desc; }
     bool isExpired() const { return charges <= 0; }
     bool isBoss() const { return m_isBoss; }
     void setIsBoss(bool boss) { m_isBoss = boss; }
@@ -67,7 +70,7 @@ class CostReductionStatus : public IStatus {
 
 class LambdaStatus : public IStatus {
    private:
-	std::string name;
+	//std::string name;
 	std::function<void(Card&, RoundTracker&)> playAction;
 	std::function<void(int&, int&, int&, int&, RoundTracker&)> costAction;
 	std::function<void(CardZone*&, RoundTracker&)> destAction;
@@ -78,13 +81,13 @@ class LambdaStatus : public IStatus {
     std::function<void(int, int, int, RoundTracker&)> manaAction;
 
    public:
-	LambdaStatus(std::string n, int c) : IStatus(c), name(std::move(n)) {}
-	LambdaStatus(std::string n): name(std::move(n)) {}
+	LambdaStatus(std::string n, int c) : IStatus(c) { this->name = std::move(n); }
+    LambdaStatus(std::string n) : IStatus() { this->name = std::move(n); }
 	
 	std::unique_ptr<IStatus> clone() const override { 
-		auto clone = std::make_unique<LambdaStatus>(name, charges);
-		clone->setPlayAction(playAction).setCostAction(costAction).setDestAction(destAction).setCanPlayAction(canPlayAction).setScoreAction(scoreAction).setAppliedAction(appliedAction).setDrawAction(drawAction).setManaAction(manaAction); 
-		return clone;
+		auto clone = std::make_unique<LambdaStatus>(this->name, charges);
+        clone->setPlayAction(playAction).setCostAction(costAction).setDestAction(destAction).setCanPlayAction(canPlayAction).setScoreAction(scoreAction).setAppliedAction(appliedAction).setDrawAction(drawAction).setManaAction(manaAction); 
+        return clone;
 	}
 
 	// Chainable Setters

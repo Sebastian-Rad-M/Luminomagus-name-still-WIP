@@ -2,7 +2,6 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
-#include <iostream>//TODO:REMOVE CHECK FROM FIRST FUNC
 
 namespace UIHelpers {
 

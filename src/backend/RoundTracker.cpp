@@ -19,13 +19,22 @@ void RoundTracker::drawCards(int amount) {
 
 void RoundTracker::addStatus(std::unique_ptr<IStatus> status) {
 	activeStatuses.push_back(std::move(status));
+	activeStatuses.back()->onApplied(*this);
 }
 //TODO: make it Gui prompt for which one
-bool RoundTracker::promptDiscard() {
-	if (hand.getSize() == 0) return false;
-	int lastIndex = hand.getSize() - 1;
-	hand.moveCardTo(lastIndex, graveyard);
-	return true;
+void RoundTracker::promptDiscard(std::function<void(int, RoundTracker&)> cb) {
+    if (hand.getSize() == 0) {
+        if (cb) cb(-1, *this);
+        return;
+    }
+    requestCardSelection("Select a card to discard", hand.getCards(), [cb](int idx, RoundTracker& st) {
+        if (idx >= 0 && idx < st.getHand().getSize()) {
+            st.getHand().moveCardTo(idx, st.getGraveyard());
+            if (cb) cb(idx, st);
+        } else {
+            if (cb) cb(-1, st);
+        }
+    });
 }
 
 bool RoundTracker::isRoundWon() const { return currentScore >= targetScore; }
@@ -120,5 +129,9 @@ void RoundTracker::setStormCount(int nr) { stormCount = nr; }
 
 std::string RoundTracker::getActiveBossName() const {
 	for (const auto& status : activeStatuses)if (status->isBoss()) return status->getName();
+	return "";
+}
+std::string RoundTracker::getActiveBossDescription() const {
+	for (const auto& status : activeStatuses) if (status->isBoss()) return status->getDescription();
 	return "";
 }

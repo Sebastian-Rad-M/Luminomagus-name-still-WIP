@@ -14,15 +14,26 @@ void RelicDatabase::loadAllRelics() {
     registry["r_bloodstoneWetstone"] = std::make_shared<OnCastTriggerRelic>("Bloodstone Wetstone","spell -> deal 2 damage.",'C',std::make_unique<Score>(2));
     registry["r_archmagesTome"] = std::make_shared<OnCastTriggerRelic>("Archmage's Tome","spell -> draw 1 card.",'R',std::make_unique<DrawCardEffect>(1));
     registry["r_monacleOfBeyond"] = std::make_shared<OnRoundStartRelic>("Monacle of Beyond","start of round, mill 2",'C',std::make_unique<LambdaEffect>([](RoundTracker& state) {for(int i=0; i<2; i++) {auto c = state.getDeck().popTopCard(); if(c) state.getGraveyard().addCard(c);}}));
-    registry["r_osmoticOrb"] = std::make_shared<OnRoundStartRelic>("Osmotic orb", "Start of round you may discard 1 to draw 1", 'C',std::make_unique<LambdaEffect>([](RoundTracker& state) {auto& handCards = state.getHand().getCards();if (handCards.empty()) return; state.requestYesNoPrompt("Discard rightmost card to draw 1?", [](bool yes, RoundTracker& s){ if(yes) { if (s.promptDiscard()) s.drawCard(); } });}));
+    registry["r_osmoticOrb"] = std::make_shared<OnRoundStartRelic>("Osmotic orb", "Start of round you may discard 1 to draw 1", 'C',std::make_unique<LambdaEffect>([](RoundTracker& state) {auto& handCards = state.getHand().getCards();if (handCards.empty()) return; state.requestYesNoPrompt("Discard a card to draw 1?", [](bool yes, RoundTracker& s){ if(yes) { s.promptDiscard([](int idx, RoundTracker& st){ if (idx>=0) st.drawCard(); }); } });}));
     registry["r_golden_ink_pen"] = std::make_shared<OnRoundEndRelic>("Golden ink pen", "if you end the round with 0 cards in hand, gain 5 gold", 'C',std::make_unique<LambdaEffect>([](RoundTracker& state) {if (state.getHand().getCards().empty()) { state.getRun().getPlayer().addGold(5);}}));
     registry["r_ignition_lens"] = std::make_shared<CustomManaRelic>("Ignition lens", "First basic gives double mana", 'C',[](int& r, int& b, int& g, RoundTracker& state) {if (state.getStormCount() == 0 && (r > 0 || b > 0 || g > 0)) {r *= 2;b *= 2;g *= 2;}});
     registry["r_echoes_of_the_first_word"] = std::make_shared<OnRoundStartRelic>("Echoes of the First Word", "All spells have echo", 'L',std::make_unique<LambdaEffect>([](RoundTracker& state) {state.addStatus(std::make_unique<EchoStatus>(999));}));
     registry["r_electrical_kineticism"] = std::make_shared<OnRoundStartRelic>("Electrical kineticism", "Spells cost 1 generic less", 'C',std::make_unique<LambdaEffect>([](RoundTracker& state) {state.addStatus(std::make_unique<CostReductionStatus>(999));}));
     registry["r_sympathetic_lodestone"] = std::make_shared<SympatheticLodestoneRelic>();
-    //TODO:code this one
-    //registry["r_altar_of_kindling"] = std::make_shared<ActiveRelic>("Altar of Kindling", "Discard a card: add 1 mana of its color", 'U',[](RoundTracker& state)
-     //{return;});
+    registry["r_altar_of_kindling"] = std::make_shared<ActiveRelic>("Altar of Kindling", "Discard a card: add 1 mana of its color", 'U',[](RoundTracker& state) {
+        state.promptDiscard([](int idx, RoundTracker& st) {
+            if (idx >= 0) {
+                auto& graveCards = st.getGraveyard().getCards();
+                if (!graveCards.empty()) {
+                    auto discardedCard = graveCards.back();
+                    int r = discardedCard->getRedCost() > 0 ? 1 : 0;
+                    int b = discardedCard->getBlueCost() > 0 ? 1 : 0;
+                    int g = discardedCard->getGreenCost() > 0 ? 1 : 0;
+                    if (r > 0 || b > 0 || g > 0) st.addMana(r, b, g);
+                }
+            }
+        });
+    });
     registry["r_locket_of_yesterdays"] = std::make_shared<OnRoundStartRelic>("Locket of yesterdays", "Copy spells for each with the same name in GY", 'C',std::make_unique<LambdaEffect>([](RoundTracker& state) {auto locketStatus = std::make_unique<LambdaStatus>("Locket", 999);locketStatus->setPlayAction([](Card& c, RoundTracker& s) {int copies = 0;for (const auto& gyCard : s.getGraveyard().getCards()) if (gyCard->getName() == c.getName()) copies++;for (int i = 0; i < copies; i++) {c.play(s); }});state.addStatus(std::move(locketStatus));}));
     registry["r_undescifrable_codex"] = std::make_shared<ActiveRelic>("Undescifrable codex", "Pay X, cast a random spell with X cost", 'L',[](RoundTracker& state) {
         state.requestXPrompt([](int x, RoundTracker& s) {
