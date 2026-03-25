@@ -38,15 +38,16 @@ namespace UIHelpers {
         result = ReplaceAll(result, "[CARD_CLASS]", cardClass);
         std::string manaHtml = "";
         
-        int generic = card.getGenericCost();
+       int generic = card.getGenericCost();
         if (generic > 0) {
             int displayGen = std::min(generic, 9); 
-            manaHtml += "<div class=\"mana-icon icon-generic\"></div>";        }
+            manaHtml += "<div class=\"mana-icon icon-" + std::to_string(displayGen) + "\"></div>";        
+        }
 
         for (int i = 0; i < card.getRedCost(); i++) manaHtml += "<div class=\"mana-icon icon-red\"></div>";
         for (int i = 0; i < card.getBlueCost(); i++)  manaHtml += "<div class=\"mana-icon icon-blue\"></div>";
         for (int i = 0; i < card.getGreenCost(); i++) manaHtml += "<div class=\"mana-icon icon-green\"></div>";
-        if (manaHtml.empty())  manaHtml = "<div class=\"mana-icon icon-0\">0</div>";
+        if (manaHtml.empty())  manaHtml = "<div class=\"mana-icon icon-0\"></div>";
         result = ReplaceAll(result, "[MANA_COSTS]", manaHtml);
 
         return result;
