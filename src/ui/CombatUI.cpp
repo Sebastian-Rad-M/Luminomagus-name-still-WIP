@@ -154,39 +154,7 @@ void CombatListener::refreshUI() {
         }
     }
 
-    // ── Pile View ─────────────────────────────────────────────────────────────
-    if (auto el = combatDoc->GetElementById("pile-view-bg")) {
-        el->SetProperty("display", activePileView != PileView::NONE ? "block" : "none");
-        if (activePileView != PileView::NONE) {
-            auto title = combatDoc->GetElementById("pile-view-title");
-            auto container = combatDoc->GetElementById("pile-view-cards");
-            if (title && container) {
-                std::string html;
-                const std::vector<std::shared_ptr<Card>>* cards = nullptr;
-                if (activePileView == PileView::GRAVEYARD) {
-                    title->SetInnerRML("GRAVEYARD");
-                    cards = &round.getGraveyard().getCards();
-                } else {
-                    title->SetInnerRML("VOID");
-                    cards = &round.getExile().getCards();
-                }
-                
-                int cols = 4;
-                for (size_t i = 0; i < cards->size(); i++) {
-                    int row = i / cols;
-                    int col = i % cols;
-                    int x = col * 80;
-                    int y = row * 110;
-                    html += "<div style=\"position: absolute; left: " + std::to_string(x) + "px; top: " 
-                            + std::to_string(y) + "px; transform: scale(0.35); transform-origin: top left;\">";
-                    html += UIHelpers::GenerateCardRML(cardTemplateRML, *(*cards)[i]);
-                    html += "</div>";
-                }
-                container->SetInnerRML(html);
-                container->SetProperty("height", std::to_string(((cards->size() + cols - 1) / cols) * 110 + 200) + "px");
-            }
-        }
-    }
+   
 
     // ── Hand ──────────────────────────────────────────────────────────────────
     if (auto handContainer = combatDoc->GetElementById("hand-container")) {

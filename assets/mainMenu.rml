@@ -1,14 +1,84 @@
+
 <rml>
 <head>
-    <title>Main Menu</title>
     <link type="text/rcss" href="style.rcss"/>
+    <title>Luminomagus</title>
+    <style>
+        body {
+            /* The body covers the whole screen. We make it completely dark. */
+            width: 100%;
+            height: 100%;
+            background-color: #030303;
+            margin: 0;
+            padding: 0;
+            font-family: Arial; /* CHANGE THIS once you get a new font! */
+        }
+
+        #title-container {
+            position: absolute;
+            top: 15%;
+            left: 5%;
+            width: 90%;
+        }
+
+        h1.game-title {
+            font-size: 120dp; /* Massive */
+            color: #2a2a2a; /* Barely visible against the black, swallowed by void */
+            font-weight: bold;
+            text-align: left;
+            margin: 0;
+            /* RmlUi supports text shadows. Let's give it a faint, dying glow */
+            font-effect: shadow(2dp 2dp #000000); 
+        }
+
+        h2.subtitle {
+            font-size: 24dp;
+            color: #5a544f;
+            margin-top: -10dp;
+            margin-left: 5dp;
+            font-style: italic;
+        }
+
+        #main-menu {
+            position: absolute;
+            bottom: 15%;
+            left: 5%;
+            width: 400dp;
+            display: block;
+        }
+
+        .menu-button {
+            display: block;
+            font-size: 36dp;
+            color: #8c857d; /* Ash color */
+            text-transform: uppercase;
+            margin-bottom: 15dp;
+            padding: 5dp 0;
+            cursor: pointer;
+            transition: color 0.2s, transform 0.1s;
+        }
+
+        .menu-button:hover {
+            color: #ffffff; /* The spark of creation */
+            /* A glowing effect on hover */
+            font-effect: shadow(0dp 0dp 10dp #ffea00); 
+            transform: scale(1.05); /* Slight jump forward */
+        }
+
+        .menu-button:active {
+            color: #ffea00;
+        }
+    </style>
 </head>
-<body class="window">
-    <div id="main-menu-container">
-        <h1>LUMINOMAGUS</h1>
-        
-        <button id="btn-new-run">New Run</button>
-        <button id="btn-quit">Quit</button>
+<body id="main_menu_body">
+    <div id="title-container">
+        <h1 class="game-title">LUMINOMAGUS</h1>
+        <h2 class="subtitle">Hold back the dark. Create.</h2>
+    </div>
+
+    <div id="main-menu">
+        <div id="btn-new-run" class="menu-button">Ignite New Run</div>
+        <div id="quit-btn" class="menu-button">Surrender to Void</div>
     </div>
 </body>
 </rml>

@@ -90,3 +90,23 @@ std::shared_ptr<IRelic> RelicDatabase::getRandomRelic() {
 
     return nullptr;
 }
+
+//TODO: rem, its for debug
+std::shared_ptr<IRelic> RelicDatabase::getRandomRareOrLegendaryRelic() {
+    if (registry.empty()) return nullptr;
+    
+    std::vector<std::shared_ptr<IRelic>> candidates;
+    for (const auto& pair : registry) {
+        char r = pair.second->getRarity();
+        // Filter for Rare ('R') or Legendary ('L') relics
+        if (r == 'R' || r == 'L') {
+            candidates.push_back(pair.second);
+        }
+    }
+    
+    if (candidates.empty()) return nullptr;
+    
+    // Pick a random index from the filtered pool
+    int idx = RNG::range(0, candidates.size() - 1);
+    return candidates[idx]->clone();
+}

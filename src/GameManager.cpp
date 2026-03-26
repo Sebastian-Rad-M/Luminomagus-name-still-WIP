@@ -24,6 +24,11 @@ void GameManager::run() {
 	InitWindow(1280, 720, "Luminomagus");
 	SetTargetFPS(60);
 
+	//SHADRES 
+	Shader voidShader = LoadShader(0, "assets/Void.fs");
+	int timeLoc = GetShaderLocation(voidShader, "u_time");
+	int resLoc = GetShaderLocation(voidShader, "u_resolution");
+
 	// RMLUI
 	RaylibRenderInterface renderInterface;
 	RaylibSystemInterface systemInterface;
@@ -33,6 +38,7 @@ void GameManager::run() {
 	Rml::Context* context = Rml::CreateContext("main", Rml::Vector2i(GetScreenWidth(), GetScreenHeight()));
 	if (!context) { CloseWindow(); return; }
 	Rml::LoadFontFace("assets/ARIAL.ttf");
+	Rml::LoadFontFace("assets/CinzelDecorative-Regular.ttf");
 	//debug
 	Rml::Debugger::Initialise(context);
 	Rml::Debugger::SetVisible(true);
@@ -75,8 +81,7 @@ void GameManager::run() {
 
 			if (previousState == GameState::DRAFT && currentState == GameState::COMBAT) {
 				// debug relic
-				if (activeRun.getPlayer().getRelicZone().getRelicZone().empty()) activeRun.getPlayer().getRelicZone().addRelic(RelicDatabase::getInstance().getRelic("r_undescifrable_codex"));
-			
+				if (activeRun.getPlayer().getRelicZone().getRelicZone().empty()) activeRun.getPlayer().getRelicZone().addRelic(RelicDatabase::getInstance().getRandomRareOrLegendaryRelic());
 				round.emplace(activeRun);
 				round->setupDeck(activeRun.getPlayer().getDeck(), activeRun.getPlayer().getRelicZone());
 				round->startNewRound();
@@ -126,8 +131,22 @@ void GameManager::run() {
 		context->Update();
 
 		BeginDrawing();
-		ClearBackground(BLACK);
-		context->Render();
+		ClearBackground(BLACK); // Keep black as a fallback
+
+		// --- RENDER THE VOID SHADER ---
+		float time = (float)GetTime();
+		float resolution[2] = { (float)GetScreenWidth(), (float)GetScreenHeight() };
+		
+		SetShaderValue(voidShader, timeLoc, &time, SHADER_UNIFORM_FLOAT);
+		SetShaderValue(voidShader, resLoc, resolution, SHADER_UNIFORM_VEC2);
+
+		BeginShaderMode(voidShader);
+		// Draw a blank white rectangle over the whole screen; the shader will paint the fog onto it
+		DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), WHITE); 
+		EndShaderMode();
+		// ------------------------------
+
+		context->Render(); // RmlUi (your main menu) draws on top of the void
 		EndDrawing();
 		if (IsWindowResized()) context->SetDimensions(Rml::Vector2i(GetScreenWidth(), GetScreenHeight()));
 	}

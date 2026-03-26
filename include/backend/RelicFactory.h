@@ -26,4 +26,5 @@ class RelicDatabase {
 	std::shared_ptr<IRelic> getRelic(const std::string& id);
 
 	std::shared_ptr<IRelic> getRandomRelic();
+	std::shared_ptr<IRelic> getRandomRareOrLegendaryRelic();
 };
