@@ -87,10 +87,19 @@ void CombatListener::refreshUI() {
 
     // Hand click prompt (discard / select from hand)
     if (auto el = combatDoc->GetElementById("prompt-line-1")) {
+        el->SetInnerRML("Cycle " + std::to_string(activeRun.getCurrentRound()) + " // DECAY");
+    }
+
+    // THIS IS THE FIX: Route the prompts into the heavy center text!
+    if (auto el = combatDoc->GetElementById("prompt-line-2")) {
         if (round.isHandClickActive()) {
             el->SetInnerRML(round.getHandClickMessage());
+        } else if (round.isYesNoPromptActive()) {
+            el->SetInnerRML(round.getYesNoMessage());
+        } else if (round.isXPromptActive() || round.getPendingManaChoices() > 0) {
+            el->SetInnerRML("Manifesting Energy..."); // Generic fallback for box-prompts
         } else {
-            el->SetInnerRML("Cycle " + std::to_string(activeRun.getCurrentRound()));
+            el->SetInnerRML(""); // Clear when no prompt
         }
     }
     

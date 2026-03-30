@@ -1,109 +1,156 @@
-
 @spritesheet status-icons {
     src: lightSprites.png;
     icon-echo:  32px 96px 32px 32px;
     icon-score: 64px 96px 32px 32px;
     icon-deck:  96px 96px 32px 32px;
-}/* --- BASE COMBAT STYLES --- */
+}
+
 body {
     width: 100%;
     height: 100%;
     margin: 0;
     padding: 0;
     font-family: Arial;
-    /* SOLID BLACK. This entirely blocks the Void Shader, making combat feel 
-       cold, grounded, and distinct from the internal Mind Palace screens. */
-    background-color: #030303;
-    decorator: image( "combat_bg.png" );
+    decorator: image("combat_bg.png"); 
 }
 
-/* --- THE IRON HUD (Structured Top Bar) --- */
-#combat-hud {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    width: 100%;
-    background-color: #080808; /* Slightly lighter than the void to show structure */
-    border-bottom-width: 2px;
-    border-bottom-color: #333333; /* Heavy iron bottom border */
-    padding: 15dp 25dp;
+#combat-layout {
+    width: 100%; 
+    height: 100%;
+    position: relative;
+}
+
+/* =====================================================
+   THE GRIMDARK BOX (Replaces .layout-box)
+   ===================================================== */
+.grim-box {
     box-sizing: border-box;
+    border-width: 2px;
+    border-color: #333333; /* Heavy iron border */
+    background-color: rgba(8, 8, 8, 0.85); /* Dark ash window */
+    padding: 10dp;
 }
 
-/* LEFT SIDE: The Threat */
-#hud-threat {
-    width: 45%;
+/* =====================================================
+   LAYOUT POSITIONS (Directly from your RCSS.txt)
+   ===================================================== */
+
+/* TOP LEFT: Menu Button */
+#btn-combat-menu {
+    position: absolute; 
+    top: 2%; 
+    left: 2%;
+    width: auto;
 }
 
-#prompt-line-1 {
-    font-size: 18dp;
-    color: #5a544f;
-    letter-spacing: 5dp;
-    margin-bottom: 2dp;
+/* LEFT COLUMN: Prompt */
+#combat-prompt {
+    position: absolute; 
+    top: 12%; 
+    left: 2%;
+    width: 24%; 
+    height: 35%;
+    text-align: center; 
 }
 
-#boss-name-display {
-    font-size: 40dp;
-    color: #b3aca2;
-    font-weight: bold;
-    text-transform: uppercase;
+/* LEFT COLUMN: Status Tracker */
+#combat-status {
+    position: absolute; 
+    top: 48%; 
+    left: 2%;
+    width: 24%; 
+    height: 15%;
+    display: flex; 
+    flex-direction: column; 
+    justify-content: space-evenly;
 }
 
-#boss-desc-display {
-    font-size: 14dp;
-    color: #8c857d;
-    font-style: italic;
-    margin-top: 5dp;
+/* LEFT COLUMN: Mana Pool */
+#combat-mana {
+    position: absolute; 
+    top: 64%; 
+    left: 2%;
+    width: 24%; 
+    height: 15%;
+    display: flex; 
+    flex-direction: column; 
+    justify-content: space-evenly;
 }
 
-
-.hud-stat-box {
+/* TOP RIGHT: Boss Info */
+#boss-section {
+    position: absolute; 
+    top: 2%; 
+    left: 74%;
+    width: 24%; 
+    height: 18%;
+    text-align: center;
     display: flex;
     flex-direction: column;
-    text-align: right;
+    justify-content: center;
 }
+#boss-name-display { font-size: 28dp; font-weight: bold; color: #b3aca2; margin-bottom: 5dp; text-transform: uppercase; }
+#boss-desc-display { font-size: 14dp; color: #8c857d; font-style: italic; }
 
-.stat-line {
-    font-size: 16dp;
-    color: #8c857d;
-    text-transform: uppercase;
-    margin-bottom: 5dp;
-}
-
-.stat-highlight {
-    font-size: 20dp;
-    color: #ffffff;
-    font-weight: bold;
-    margin-left: 10dp;
-}
-
-/* Horizontal Light Pool (Mana) */
-#light-pool-horizontal {
+/* RIGHT EDGE: Piles */
+.pile-box {
+    position: relative;
     display: flex;
-    gap: 20dp;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* Hides scaled cards clipping */
+}
+.pile-label { font-size: 14dp; color: #5a544f; letter-spacing: 2dp; text-transform: uppercase; }
+.pile-box:hover { border-color: #8c857d; cursor: pointer; }
+
+#deck-section { position: absolute; top: 40%; left: 88%; width: 10%; height: 18%; }
+#graveyard-section { position: absolute; top: 60%; left: 88%; width: 10%; height: 18%; }
+#void-section { position: absolute; top: 80%; left: 88%; width: 10%; height: 18%; }
+
+/* BOTTOM LEFT: Relics */
+#relic-section {
+    position: absolute; 
+    top: 80%; 
+    left: 2%;
+    width: 25%; 
+    height: 18%;
+    overflow-y: auto; /* Let them scroll if they stack up */
+    text-align: center;
 }
 
-.pool-stat {
+/* BOTTOM CENTER-RIGHT: Hand */
+#hand-section {
+    position: absolute; 
+    top: 70%; 
+    left: 28%;
+    width: 58%; 
+    height: 30%;
+}
+#hand-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Cards hang from the top of the container */
+    padding-top: 30dp;
+}
+
+/* =====================================================
+   COMPONENTS
+   ===================================================== */
+
+/* Text inside status/mana rows */
+.status-row {
     display: flex;
     align-items: center;
-    font-size: 24dp;
+    justify-content: center;
+    gap: 10dp;
+    font-size: 20dp;
     font-weight: bold;
     color: #ffffff;
 }
+.status-icon { display: inline-block; width: 28px; height: 28px; }
+#x-value-display { font-size: 26dp; font-weight: bold; color: #ffffff; margin: 0 15dp; vertical-align: middle; }
 
-.mana-spark {
-    width: 24px;  /* Slightly smaller for the horizontal bar */
-    height: 24px;
-    border-radius: 50%;
-    margin-right: 8dp;
-    border-width: 1px;
-}
-
-.spark-red { background-color: #ff3333; border-color: #ffaaaa; box-shadow: 0 0 8px #ff3333; }
-.spark-blue { background-color: #3366ff; border-color: #aaaaff; box-shadow: 0 0 8px #3366ff; }
-.spark-green { background-color: #33ff33; border-color: #aaffaa; box-shadow: 0 0 8px #33ff33; }
-
-/* Menus & Buttons */
+/* Buttons */
 .void-btn {
     background-color: #050505;
     color: #b3aca2;
@@ -114,312 +161,64 @@ body {
     text-transform: uppercase;
     cursor: pointer;
 }
-.void-btn:hover {
-    border-color: #ffffff;
-    color: #ffffff;
-}
-/* --- THE PROMPT (Center Screen) --- */
-#action-prompt {
-    position: absolute;
-    top: 35%; /* Pushed down slightly to be dead center */
-    left: 0;
-    width: 100%;
-    text-align: center;
-}
+.void-btn:hover { border-color: #ffffff; color: #ffffff; }
 
-#prompt-line-2 {
-    font-size: 30dp;
-    color: #ffea00;
-    font-weight: bold;
-    font-effect: shadow(0dp 0dp 10dp rgba(255, 234, 0, 0.5));
-    margin-bottom: 20dp;
-}
-
-/* The Pop-Up Box Styling for all prompts */
-#inline-x-prompt, #inline-yesno-prompt, #inline-mana-prompt {
-    background-color: #080808;
-    border-width: 2px;
-    border-color: #333333;
-    padding: 30dp;
-    width: 450px;
-    margin: 0 auto; /* Centers the box horizontally */
-    box-sizing: border-box;
-}
-
-#yesno-message {
-    font-size: 20dp;
-    color: #b3aca2;
-    margin-bottom: 20dp;
-    text-transform: uppercase;
-}
-
-#x-value-display {
-    font-size: 30dp;
-    color: #ffffff;
-    font-weight: bold;
-    margin: 0 20dp;
-    vertical-align: middle;
-}
-/* --- THE FRAGMENTS (Hand, Bottom Center) --- */
-#hand-container {
-    position: absolute;
-    bottom: -20px; /* Push them slightly off the bottom edge */
-    left: 20%;
-    width: 60%;
-    display: flex;
-    justify-content: center;
-    gap: 10dp; /* Slight overlap or tight grouping */
-}
-
-/* Let cards hover up out of the void */
+/* Cards in Hand (Reinstating your old margin/top logic) */
 .card-wrapper {
+    display: inline-block;
+    margin: 0 -20dp; /* Overlap cards */
+    position: relative;
+    top: 0;
+    transition: top 0.2s;
     cursor: pointer;
-    transition: transform 0.2s;
 }
 .card-wrapper:hover {
-    transform: translateY(-30px);
+    top: -40dp; /* Pulls up when hovered */
     z-index: 100;
 }
 
-/* --- THE BURDENS (Relics, Bottom Left) --- */
-#relic-container {
-    position: absolute;
-    bottom: 5%;
-    left: 2%;
-    width: 350px;
-    display: flex;
-    flex-wrap: wrap; /* Let them pile up haphazardly */
-}
-
-/* --- THE ARCHIVES (Deck/Piles, Bottom Right) --- */
-#right-hud-zone {
-    position: absolute;
-    bottom: 5%;
-    right: 5%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end; /* Locks everything to the right edge */
-    gap: 15dp;
-}
-
-#resource-panel {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    background-color: rgba(0, 0, 0, 0.8);
-    border-width: 2px;
-    border-color: #333333;
-    padding: 15dp;
-    gap: 15dp;
-    width: 260px; /* Matches width of the 3 piles below it */
-    box-sizing: border-box;
-}
-
-#archive-zone {
-    display: flex;
-    gap: 20dp;
-}
-
-.pile {
-    width: 80px;
-    height: 112px; /* Scale down the card ratio */
-    border-width: 2px;
-    border-color: #333333;
-    background-color: rgba(0,0,0,0.8);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    position: relative;
-}
-.pile:hover { border-color: #8c857d; }
-
-.pile-count { font-size: 30dp; font-weight: bold; color: #b3aca2; }
-.pile-label {
-    position: absolute;
-    bottom: -25px;
-    font-size: 14dp;
-    color: #5a544f;
-    letter-spacing: 2dp;
-}
-
-/* Scale down the injected tiny cards for the ash/void piles */
+/* Miniature Cards in Piles */
 .small-card-wrapper {
-    transform: scale(0.3);
-    transform-origin: center;
-}
-
-/* --- MENUS AND OVERLAYS --- */
-#btn-combat-menu {
     position: absolute;
-    top: 2%;
-    right: 2%;
-    background-color: transparent;
-    color: #5a544f;
-    font-size: 24dp;
-    border-width: 0;
+    top: 0;
+    left: 0;
+    transform: scale(0.35); /* Shrinks the massive cards to fit */
+    transform-origin: top left;
 }
+#graveyard-container, #void-container { width: 100%; height: 100%; }
 
-#combat-menu-overlay, #pile-view-bg {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background-color: rgba(0, 0, 0, 0.9);
-    z-index: 500;
-}
-
-.menu-box {
-    position: absolute;
-    top: 40%; left: 35%; width: 30%;
-    display: flex; flex-direction: column; gap: 20dp;
-}
-
-#pile-view-title {
-    text-align: center; margin-top: 50dp; font-size: 40dp; color: #b3aca2;
-}
-
-#pile-view-cards {
-    position: relative; width: 80%; margin: 50dp auto;
-}
-
-#btn-close-pile-view {
-    position: absolute; bottom: 50dp; left: 45%;
-}
-/* --- Status Panel --- */
-#status-panel {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 10px 5px;
-}
-
-.status-item {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.status-icon {
-    display: inline-block;
-    width: 28px;
-    height: 28px;
-}
-
-.status-icon.echo  { decorator: image(icon-echo); }
-.status-icon.score { decorator: image(icon-score); }
-.status-icon.deck  { decorator: image(icon-deck); }
-
-#count-echo, #count-score, #count-deck {
-    font-size: 18px;
-    font-weight: bold;
-    color: #ffffff;
-}
-.menu-btn { display: block; width: 100%; padding: 10px; margin-bottom: 10px; font-size: 16px; }
-.menu-resume { background-color: #223322; border: 2dp #448844; color: #99ff99; }
-.menu-resume:hover { background-color: #335533; border-color: #66cc66; }
-.menu-restart { background-color: #222244; border: 2dp #4444aa; color: #aaaaff; }
-.menu-restart:hover { background-color: #333366; border-color: #6666cc; }
-.menu-quit { background-color: #2a1111; border: 2dp #884444; color: #ff9999; margin-bottom: 0; }
-.menu-quit:hover { background-color: #441111; border-color: #cc6666; }
-/* --- RELICS (Massive, petrified echoes) --- */
-.relic-wrapper {
-    display: inline-block;
-    position: relative;
-    margin: 15dp; /* More breathing room for the bigger slabs */
-}
-
+/* Relics */
+.relic-wrapper { display: inline-block; position: relative; margin: 5dp; }
 .relic-btn {
     display: block;
-    width: 220px;  /* MUCH bigger */
-    height: 150px; /* Heavy and imposing */
-    background-color: #0e0d0d;
-    color: #b3aca2; /* Ash gray so text is visible */
-    
-    /* RmlUi requires explicit border properties! */
-    border-width: 2px; 
-    border-color: #444444; 
-    
-    font-size: 18px;
-    font-weight: bold;
-    text-align: center;
-    border-radius: 2px;
+    width: 120px;
+    height: 80px; 
+    background-color: #050505;
+    color: #b3aca2;
+    border-width: 2px; border-color: #444444; 
+    font-size: 14px; font-weight: bold; text-align: center;
     cursor: pointer;
-    transition: transform 0.1s, border-color 0.2s, color 0.2s, background-color 0.2s;
-    line-height: 30px; 
+    line-height: 80px; /* Vertically center text safely */
 }
+.relic-activatable { border-color: #ffea00; color: #ffffff; }
+.relic-btn:hover { background-color: #111111; border-color: #ffffff; color: #ffffff; }
 
-/* The faint, desperate glow for usable relics */
-.relic-activatable {
-    border-color: #5a544f;
-    color: #ffffff;
-    font-effect: shadow(0dp 0dp 5dp rgba(255, 255, 255, 0.3));
-}
-
-.relic-btn:hover {
-    transform: scale(1.05); /* Lifts up heavily */
-    border-color: #ffffff;
-    color: #ffffff;
-    background-color: #111111; /* Slight highlight so it pops from the void */
-}
-
-/* --- RELIC TOOLTIP --- */
 .relic-tooltip {
     display: none; 
     position: absolute;
-    top: 100%; 
-    margin-top: 5dp; 
-    
-    /* 1. Anchor exactly to the left edge */
-    left: 0; 
-    
-    /* 2. Match the exact width of the relic above it (180px) */
-    width: 180px; 
-    box-sizing: border-box; /* Ensures padding doesn't make it wider than 180px */
-    
+    top: 100%; left: 0; width: 120px; margin-top: 5dp;
     background-color: rgba(5, 5, 5, 0.95);
-    border-width: 1px;
-    border-color: #555555;
-    padding: 12dp;
-    z-index: 50;
+    border-width: 1px; border-color: #555555; padding: 10dp; z-index: 50; box-sizing: border-box;
 }
+.relic-wrapper:hover .relic-tooltip { display: block; }
+.relic-tooltip-name { display: block; color: #ffffff; font-weight: bold; font-size: 12dp; margin-bottom: 5dp; line-height: 1.2;}
+.relic-tooltip-desc { display: block; color: #8c857d; font-size: 11dp; line-height: 1.3; margin-bottom: 10dp;}
+.tooltip-shatter { width: 100%; background-color: #1a0505; color: #ff4444; border-width: 1px; border-color: #ff4444; padding: 5dp; font-size: 11dp; text-transform: uppercase; cursor: pointer; display: block; }
+.tooltip-shatter:hover { background-color: #ff4444; color: #000000; }
 
-.relic-wrapper:hover .relic-tooltip {
-    display: block; /* Show when hovering over the wrapper */
-}
+/* Overlays */
+#combat-menu-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); z-index: 500; }
+.menu-box { width: 300px; margin: 15% auto; text-align: center; padding: 30dp; }
 
-.relic-tooltip-name {
-    display: block;
-    color: #ffffff;
-    font-weight: bold;
-    font-size: 14dp;
-    margin-bottom: 5dp;
-    text-transform: uppercase;
-    line-height: 1.2;
-}
-
-.relic-tooltip-desc {
-    display: block;
-    color: #8c857d;
-    font-size: 12dp;
-    line-height: 1.3;
-    margin-bottom: 10dp;
-}
-
-/* The Shatter/Forget Button */
-.tooltip-shatter {
-    display: block;
-    width: 100%;
-    background-color: #1a0505; 
-    color: #ff4444;
-    border-width: 1px;
-    border-color: #ff4444;
-    padding: 8dp;
-    font-size: 12dp;
-    text-transform: uppercase;
-    cursor: pointer;
-}
-
-.tooltip-shatter:hover {
-    background-color: #ff4444;
-    color: #000000;
-}
+#pile-view-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); z-index: 400; }
+#pile-view-content { width: 800px; height: 60%; margin: 5% auto; overflow-y: auto; text-align: center; padding: 40dp; }
