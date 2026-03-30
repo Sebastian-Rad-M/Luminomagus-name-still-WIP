@@ -40,8 +40,7 @@ std::shared_ptr<IRelic> SympatheticLodestoneRelic::getTargetRelic(RoundTracker& 
 	auto target = relics[0];
 	if (target.get() == this || target->getName() == "Sympathetic Lodestone") return nullptr;
 	return target;
-	//Probably the most fun relic i had to code, also insade code upkeep.
-	//TODO: add all classes of relic back to this
+	//Probably the most fun relic i had to code, also insane code upkeep.
 }
 void SympatheticLodestoneRelic::onRoundStart(RoundTracker& state) {	if (auto target = getTargetRelic(state)) target->onRoundStart(state);}
 void SympatheticLodestoneRelic::onRoundEnd(RoundTracker& state) {if (auto target = getTargetRelic(state)) target->onRoundEnd(state);}
@@ -49,6 +48,7 @@ void SympatheticLodestoneRelic::onCardPlayed(RoundTracker& state) {	if (auto tar
 void SympatheticLodestoneRelic::onCardDrawn(RoundTracker& state) {if (auto target = getTargetRelic(state)) target->onCardDrawn(state);}
 void SympatheticLodestoneRelic::onManaAdded(int& r, int& b, int& g, RoundTracker& state) {if (auto target = getTargetRelic(state)) target->onManaAdded(r, b, g, state);}
 void SympatheticLodestoneRelic::onDamageDealt(int& damage, RoundTracker& state) {if (auto target = getTargetRelic(state)) target->onDamageDealt(damage, state);}
+void SympatheticLodestoneRelic::activate(RoundTracker& state) {if (auto target = getTargetRelic(state)) target->activate(state);}
 
 
 // --- Getters ---

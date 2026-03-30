@@ -27,7 +27,7 @@ void RoundTracker::promptDiscard(std::function<void(int, RoundTracker&)> cb) {
         if (cb) cb(-1, *this);
         return;
     }
-    requestCardSelection("Select a card to discard", hand.getCards(), [cb](int idx, RoundTracker& st) {
+    requestHandClick("Select a card to discard", [cb](int idx, RoundTracker& st) {
         if (idx >= 0 && idx < st.getHand().getSize()) {
             st.getHand().moveCardTo(idx, st.getGraveyard());
             if (cb) cb(idx, st);
@@ -119,10 +119,14 @@ bool RoundTracker::playCardFromHand(int index) {
 }
 
 //TODO: make it Gui prompt for which one
-int RoundTracker::requestHandTarget() {
-	const auto& handCards = hand.getCards();
-	if (handCards.empty()) return -1;
-	return 0;
+void RoundTracker::requestHandTarget(std::function<void(int, RoundTracker&)> cb) {
+    if (hand.getCards().empty()) {
+        if (cb) cb(-1, *this);
+        return;
+    }
+    requestHandClick("Select a card from your hand", [cb](int idx, RoundTracker& st) {
+        if (cb) cb(idx, st);
+    });
 }
 
 void RoundTracker::setStormCount(int nr) { stormCount = nr; }

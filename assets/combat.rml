@@ -1,132 +1,96 @@
 <rml>
 <head>
-    <title>Combat</title>
+    <title>The Struggle</title>
     <link type="text/rcss" href="style.rcss"/>
-    <link type="text/rcss" href="combat.rcss"/>
     <link type="text/rcss" href="card.rcss"/>
+    <link type="text/rcss" href="combat.rcss"/>
 </head>
-<body class="window">
-    <div id="combat-layout">
-        
-        <div id="sidebar">
-            <button id="btn-combat-menu">M</button>
-
-            <div id="status-panel" class="panel">
-                <div class="status-item">
-                    <div class="status-icon echo"></div>
-                    <span id="count-echo">0</span>
-                </div>
-                <div class="status-item">
-                    <div class="status-icon score"></div>
-                    <span id="count-score">0/0</span>
-                </div>
-                <div class="status-item">
-                    <div class="status-icon deck"></div>
-                    <span id="count-deck">0</span>
-                </div>
-            </div>
-            <div id="combat-prompt" class="panel">
-                <p id="prompt-line-1">Awaiting Action...</p>
-                <p id="prompt-line-2"></p>
-                <p id="prompt-line-3"></p>
-                
-                <div id="inline-mana-prompt" class="inline-prompt" style="display: none;">
-                    <p class="prompt-title">Select Mana Color</p>
-                    <div class="btn-row">
-                        <button class="mana-btn red" id="mana-red">RED</button>
-                        <button class="mana-btn blue" id="mana-blue">BLUE</button>
-                        <button class="mana-btn green" id="mana-green">GREEN</button>
-                    </div>
-                </div>
-                
-                <div id="inline-x-prompt" class="inline-prompt" style="display: none;">
-                    <p class="prompt-title">Choose X</p>
-                    <div class="btn-row">
-                        <button class="mana-btn red small-btn" id="btn-x-minus">-</button>
-                        <span id="x-value-display">0</span>
-                        <button class="mana-btn green small-btn" id="btn-x-plus">+</button>
-                    </div>
-                    <button id="btn-x-confirm" class="confirm-btn">Confirm</button>
-                </div>
-                
-                <div id="inline-yesno-prompt" class="inline-prompt" style="display: none;">
-                    <p id="yesno-message" class="prompt-title">Yes or No?</p>
-                    <div class="btn-row">
-                        <button id="btn-yes" class="yes-btn">Yes</button>
-                        <button id="btn-no" class="no-btn">No</button>
-                    </div>
-                </div>
-            </div>
-            
-            <div id="lights-panel" class="panel">
-                <div class="light-container">
-                    <div class="light-circle red">R</div>
-                    <span class="light-count" id="count-light-red">0</span>
-                </div>
-                <div class="light-container">
-                    <div class="light-circle blue">B</div>
-                    <span class="light-count" id="count-light-blue">0</span>
-                </div>
-                <div class="light-container">
-                    <div class="light-circle green">G</div>
-                    <span class="light-count" id="count-light-green">0</span>
-                </div>
-            </div>
-
-            <div id="discard-piles">
-                <div id="void-section" class="panel pile-panel">
-                    <h3 id="void-title">VOID</h3>
-                    <div id="void-container"></div>
-                </div>
-                <div id="graveyard-section" class="panel pile-panel">
-                    <h3 id="graveyard-title">GRAVEYARD</h3>
-                    <div id="graveyard-container"></div>
-                </div>
-            </div>
+<body id="combat-body">
+   <div id="combat-hud">
+        <div id="hud-threat">
+            <div id="prompt-line-1">CYCLE 1 // DECAY</div>
+            <div id="boss-name-display">THE VOID SLUMBERS</div>
+            <div id="boss-desc-display">Only the creeping dark remains. Hold it back.</div>
         </div>
 
-        <div id="main-area">
-            <div id="top-main-area">
-                <div id="boss-info" class="panel boss-panel">
-                    <h3>BOSS info</h3>
-                    <p id="boss-name-display">(Empty for now)</p>
-                    <p id="boss-desc-display"></p>
-                    <div id="pile-view-bg" style="display: none;">
-                        <div id="pile-view-header">
-                            <h3 id="pile-view-title">DISCARD</h3>
-                          
-                        </div> 
-                        <div id="pile-view-content">
-                            <div id="pile-view-cards" class="card-grid"></div>
-                        </div>
-                          <button id="btn-close-pile-view">Close X</button>
-                    </div>
-                </div>
-                
-                <div id="relic-section" class="panel relic-panel">
-                    <p>Relics</p>
-                    <div id="relic-container"></div>
-                </div>
-            </div>
-
-            <div id="hand-section" class="panel">
-                <p>HAND</p>
-                <div id="hand-container"></div>
-            </div>
-        </div>
-
-
-        <div id="combat-menu-overlay" class="overlay" style="display: none;">
-            <div class="overlay-center">
-                <div class="panel modal-box">
-                    <h2>Paused</h2>
-                    <button id="btn-menu-resume" class="menu-btn menu-resume">Resume</button>
-                    <button id="btn-menu-restart" class="menu-btn menu-restart">Restart</button>
-                    <button id="btn-menu-quit" class="menu-btn menu-quit">Quit to Title</button>
-                </div>
-            </div>
-        </div>
-
+        <button class="void-btn" id="btn-combat-menu">|| Menu</button>
     </div>
+<div id="action-prompt">
+        <div id="prompt-line-2"></div>
+        
+        <div id="inline-x-prompt" style="display: none;">
+            <div style="margin-bottom: 20dp; color: #b3aca2; font-size: 18dp; text-transform: uppercase;">Channel Energy</div>
+            <button class="void-btn" id="btn-x-minus">-</button>
+            <span id="x-value-display">0</span>
+            <button class="void-btn" id="btn-x-plus">+</button>
+            <div style="margin-top: 25dp;">
+                <button class="void-btn" id="btn-x-confirm">Manifest</button>
+            </div>
+        </div>
+        
+        <div id="inline-yesno-prompt" style="display: none;">
+            <div id="yesno-message"></div>
+            <button class="void-btn" id="btn-yes">Yes</button>
+            <button class="void-btn" id="btn-no">No</button>
+        </div>
+
+        <div id="inline-mana-prompt" style="display: none;">
+            <div style="margin-bottom: 25dp; color: #b3aca2; font-size: 18dp; text-transform: uppercase;">Draw from the Pool</div>
+            <div class="mana-row" style="display: flex; justify-content: center; gap: 20dp;">
+                <div class="mana-icon icon-red" id="mana-red" style="cursor: pointer;"></div>
+                <div class="mana-icon icon-blue" id="mana-blue" style="cursor: pointer;"></div>
+                <div class="mana-icon icon-green" id="mana-green" style="cursor: pointer;"></div>
+            </div>
+        </div>
+    </div>
+    <div id="relic-container"></div>
+
+
+    <div id="hand-container"></div>
+<div id="right-hud-zone">
+        
+        <div id="resource-panel">
+            <div class="hud-stat-box">
+                <div class="stat-line">Light Forged: <span id="count-score" class="stat-highlight">0/10</span></div>
+                <div class="stat-line">Echo Count: <span id="count-echo" class="stat-highlight">0</span></div>
+            </div>
+
+          <div id="light-pool-horizontal">
+                <div class="pool-stat"><div class="mana-icon icon-red"></div><span id="count-light-red">0</span></div>
+                <div class="pool-stat"><div class="mana-icon icon-blue"></div><span id="count-light-blue">0</span></div>
+                <div class="pool-stat"><div class="mana-icon icon-green"></div><span id="count-light-green">0</span></div>
+            </div>
+        </div>
+
+        <div id="archive-zone">
+            <div class="pile" id="deck-section">
+                <div class="pile-count" id="count-deck">0</div>
+                <div class="pile-label">DECK</div> 
+            </div>
+            <div class="pile" id="graveyard-section">
+                <div id="graveyard-container"></div>
+                <div class="pile-label" id="graveyard-title">THE ASH</div>
+            </div>
+            <div class="pile" id="void-section">
+                <div id="void-container"></div>
+                <div class="pile-label" id="void-title">THE VOID</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="combat-menu-overlay" style="display: none;">
+        <div class="menu-box">
+            <button class="void-btn" id="btn-menu-resume">Resume Struggle</button>
+            <button class="void-btn" id="btn-menu-restart">Surrender & Restart</button>
+            <button class="void-btn" id="btn-menu-quit">Abandon to Void</button>
+        </div>
+    </div>
+
+    <div id="pile-view-bg" style="display: none;">
+        <h1 id="pile-view-title">THE ASH</h1>
+        <div id="pile-view-cards"></div>
+        <button class="void-btn" id="btn-close-pile-view">Close Eyes</button>
+    </div>
+
 </body>
 </rml>

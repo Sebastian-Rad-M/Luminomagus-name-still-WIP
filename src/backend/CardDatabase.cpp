@@ -68,19 +68,18 @@ void CardDatabase::loadAllCards() {
       }));
   library["c_showcase_of_knowlege"] = showcaseOfKnowlege;
 
-  // discern from darkness
-  //  look at the top 2+2*x cards, keep 1+1*x on top,rest GY. X=(nr of discern
-  //  from darkness in gy)
-  // i cant figure out for the life of me how to use gyscale, f the guy who
-  // wrote the cards
-
-  // TODO:just fucking rework this
-  /* Card discernFromDarkness("Discern from Darkness", 0, 0, 0, 1, 'C');
-  shuffle graveyard into deck. draw 1.
+  Card discernFromDarkness("Discern from Darkness", 0, 0, 0, 1, 'C');
+  discernFromDarkness.setText("Shuffle your graveyard into your deck. Draw a card.");
   discernFromDarkness.addEffect(
-       std::make_unique<LambdaEffect>([](RoundTracker &state) { }));
-   library["c_discern_from_darkness"] = discernFromDarkness;
- */
+      std::make_unique<LambdaEffect>([](RoundTracker &state) {
+        auto &grave = state.getGraveyard();
+        auto &deck = state.getDeck();
+        while (!grave.getCards().empty())
+          deck.addCard(grave.popTopCard());
+        deck.shuffle();
+        state.drawCard();
+      }));
+  library["c_discern_from_darkness"] = discernFromDarkness;
 
   Card fiatLux("Fiat Lux", 1, 1, 0, 0, 'C');
   fiatLux.setText("Score 5 for each echo");
@@ -127,7 +126,6 @@ void CardDatabase::loadAllCards() {
   catalogue.addEffect(std::make_unique<DrawCardEffect>(3));
   library["c_siftTheScrolls"] = catalogue;
 
-  // TODO:make ask for which zone
   Card interfereWithThePattern("Interfere with the pattern", 0, 0, 1, 1, 'U');
   interfereWithThePattern.setText(
       "Shuffle one zone of your choice. Draw a card.");
@@ -224,7 +222,6 @@ void CardDatabase::loadAllCards() {
   strokeTheFadingEmbers.addEffect(std::make_unique<AddManaEffect>(4, 0, 0));
   library["c_stroke_the_fading_embers"] = strokeTheFadingEmbers;
 
-  // TODO:make GUI-ABLE
   Card radiantDecay("Radiant Decay", 0, 1, 0, 1, 'U');
   radiantDecay.setText("Exile a card from your graveyard. Add mana equal to "
                        "its cost, the generic is red.");
@@ -268,7 +265,6 @@ void CardDatabase::loadAllCards() {
   glimpseWCHB.addEffect(std::make_unique<DiscardEffect>(3));
   library["c_glimpseWCHB"] = glimpseWCHB;
 
-  // TODO; refactor this? light, 5 minute job
   Card doomsday("Doomsday", 0, 0, 2, 1, 'L');
   doomsday.setText(
       "Search your deck and graveyard for five cards and exile the rest. Put "

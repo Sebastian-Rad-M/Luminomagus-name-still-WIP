@@ -23,7 +23,7 @@ void GameManager::run() {
 	SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_WINDOW_MAXIMIZED);
 	InitWindow(1280, 720, "Luminomagus");
 	SetTargetFPS(60);
-
+	SetExitKey(0);
 	//SHADRES 
 	Shader voidShader = LoadShader(0, "assets/Void.fs");
 	int timeLoc = GetShaderLocation(voidShader, "u_time");
@@ -70,6 +70,7 @@ void GameManager::run() {
 
 	// ===== MAIN FRAME LOOP =====
 	while (!WindowShouldClose()) {
+		if (IsKeyPressed(KEY_ESCAPE)) state = GameState::MAIN_MENU;
 		GameState currentState = state;
 
 		if (currentState != previousState) {

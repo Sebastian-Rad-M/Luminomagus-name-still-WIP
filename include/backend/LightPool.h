@@ -26,6 +26,18 @@ class ManaPool {
 
 	void spendMana(const int costR, const int costB, const int costG, const int costGeneric);
 	// check canAfford before
+	// generic is now handled by the GUI — player picks which colors to drain
+	int pendingGenericSpend = 0;
+	bool hasPendingGenericSpend() const { return pendingGenericSpend > 0; }
+	void spendGenericByColor(char color) {
+		if (pendingGenericSpend <= 0) return;
+		switch (color) {
+			case 'R': case 'r': if (red > 0) { red--; pendingGenericSpend--; } break;
+			case 'B': case 'b': if (blue > 0) { blue--; pendingGenericSpend--; } break;
+			case 'G': case 'g': if (green > 0) { green--; pendingGenericSpend--; } break;
+			default: break;
+		}
+	}
 	// for generic We drain Green first, then Blue, then Red (arbitrary priority).
 
 	friend std::ostream& operator<<(std::ostream& os, const ManaPool& pool) {

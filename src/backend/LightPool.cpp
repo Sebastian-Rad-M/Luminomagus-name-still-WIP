@@ -42,14 +42,20 @@ bool ManaPool::canAfford(const int costR, const int costB, const int costG,const
 }
 
 
-//TODO: GUI selection 
 void ManaPool::spendMana(const int costR, const int costB, const int costG, const int costGeneric) {
 	red -= costR;
 	blue -= costB;
 	green -= costG;
-	int genericRemaining = costGeneric;
-	//overkill code 
-	int* const vars[3] = {&green, &blue, &red};
-	for (int i = 0; i < 3; i++) 
-		while (genericRemaining > 0 && *vars[i] > 0) {(*vars[i])--;genericRemaining--;}
+	if (costGeneric > 0) {
+		// If only one color has mana left, auto-spend it
+		int nonZeroColors = (red > 0 ? 1 : 0) + (blue > 0 ? 1 : 0) + (green > 0 ? 1 : 0);
+		if (nonZeroColors <= 1) {
+			int genericRemaining = costGeneric;
+			int* const vars[3] = {&green, &blue, &red};
+			for (int i = 0; i < 3; i++) 
+				while (genericRemaining > 0 && *vars[i] > 0) {(*vars[i])--;genericRemaining--;}
+		} else {
+			pendingGenericSpend = costGeneric;
+		}
+	}
 }

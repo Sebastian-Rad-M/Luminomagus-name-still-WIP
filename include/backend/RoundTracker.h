@@ -45,6 +45,10 @@ private:
   std::vector<std::string> optionChoices;
   std::string optionPromptMessage;
 
+  // Pending Hand Click callback (click directly from hand, no modal)
+  std::function<void(int, RoundTracker &)> pendingHandClickCallback = nullptr;
+  std::string handClickMessage;
+
   // Status message for the UI prompt box
   std::string promptMessage;
 
@@ -53,7 +57,7 @@ public:
 
   void drawCard();
   void drawCards(int amount);
-  void promptDiscard(std::function<void(int, RoundTracker&)> cb = nullptr);
+  void promptDiscard(std::function<void(int, RoundTracker &)> cb = nullptr);
 
   std::string getPromptMessage() const { return promptMessage; }
   void setPromptMessage(const std::string &msg) { promptMessage = msg; }
@@ -145,6 +149,21 @@ public:
     }
   }
 
+  bool isHandClickActive() const { return pendingHandClickCallback != nullptr; }
+  std::string getHandClickMessage() const { return handClickMessage; }
+  void requestHandClick(std::string msg,
+                        std::function<void(int, RoundTracker &)> cb) {
+    handClickMessage = std::move(msg);
+    pendingHandClickCallback = std::move(cb);
+  }
+  void resolveHandClick(int index) {
+    if (pendingHandClickCallback) {
+      auto cb = std::move(pendingHandClickCallback);
+      pendingHandClickCallback = nullptr;
+      cb(index, *this);
+    }
+  }
+
   int getStormCount() const;
   CardZone &getDeck();
   ManaPool &getManaPool();
@@ -153,7 +172,7 @@ public:
   CardZone &getHand();
   RelicZone &getRelicZone();
   void moveHandCardToExile(int index) { hand.moveCardTo(index, exile); }
-  int requestHandTarget();
+  void requestHandTarget(std::function<void(int, RoundTracker &)> cb);
   void setupDeck(const CardZone &library, const RelicZone &startingRelics);
   bool playCardFromHand(int index);
   int getCurrentScore() const;

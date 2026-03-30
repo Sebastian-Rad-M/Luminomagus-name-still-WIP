@@ -126,6 +126,7 @@ class SympatheticLodestoneRelic : public IRelic {
 	void onCardDrawn(RoundTracker& state) override;
 	void onManaAdded(int& r, int& b, int& g, RoundTracker& state) override;
 	void onDamageDealt(int& damage, RoundTracker& state) override;	
+	void activate(RoundTracker& state) override;
 	std::shared_ptr<IRelic> clone() const override;
 }; //antipattern? yes
 //can i figure out any other way? no

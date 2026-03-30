@@ -84,6 +84,15 @@ void CombatListener::refreshUI() {
     if (auto overlay = combatDoc->GetElementById("inline-mana-prompt")) {
         overlay->SetProperty("display", (round.getPendingManaChoices() > 0 && !round.isXPromptActive() && !round.isYesNoPromptActive()) ? "block" : "none");
     }
+
+    // Hand click prompt (discard / select from hand)
+    if (auto el = combatDoc->GetElementById("prompt-line-1")) {
+        if (round.isHandClickActive()) {
+            el->SetInnerRML(round.getHandClickMessage());
+        } else {
+            el->SetInnerRML("Cycle " + std::to_string(activeRun.getCurrentRound()));
+        }
+    }
     
     // THIS is the block that makes the Codex prompt appear!
     if (auto overlay = combatDoc->GetElementById("inline-x-prompt")) {
@@ -368,10 +377,14 @@ void CombatListener::ProcessEvent(Rml::Event& event) {
         return;
     }
 
-    // ── Play a Card ───────────────────────────────────────────────────────────
+    // ── Play a Card (or resolve a hand-click prompt) ─────────────────────────
     if (id.find("hand-card-") == 0) {
         int index = std::stoi(id.substr(10));
-        round.playCardFromHand(index);
+        if (round.isHandClickActive()) {
+            round.resolveHandClick(index);
+        } else {
+            round.playCardFromHand(index);
+        }
         checkWinCondition();
         checkLossCondition();
         refreshUI();
