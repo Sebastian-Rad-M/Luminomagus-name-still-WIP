@@ -78,14 +78,20 @@ body {
 .pile-box{
     margin-top: 30dp;
     height: 45%;
+    display: flex;
+    flex-direction: row;
 }
+  #pile-view-cards {                 
+      position: relative;                                                                                                                                              
+      width: 100%;       
+  }
 
 .pile {
     margin-left: 10dp;
     position: relative;
-    overflow: hidden;
     width: 45%;
     height: 100%;
+    min-height: 170dp;
 }
 .pile-label { font-size: 14dp; color: #5a544f; letter-spacing: 2dp; text-transform: uppercase; }
 .pile-box:hover { border-color: #8c857d; cursor: pointer; }
@@ -211,5 +217,21 @@ font-size: 20px;
 .tooltip-shatter { width: 100%; background-color: #1a0505; color: #ff4444; border-width: 1px; border-color: #ff4444; padding: 5dp; font-size: 11dp; text-transform: uppercase; cursor: pointer; display: block; }
 .tooltip-shatter:hover { background-color: #ff4444; color: #000000; }
 
-#pile-view-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); z-index: 500; }
-.pile-view-content { width: 300px; margin: 15% auto; text-align: center; padding: 30dp; }
+#pile-view-bg {                                                                                                                                                      
+      position: absolute;
+      left: 33%;                                                                                                                                                       
+      top: 0;     
+      width: 30%;                                                                                                                                                      
+      height: 60%;
+      background-color: rgba(0,0,0,0.95);
+      z-index: 500;                      
+      overflow-y: auto;                                                                                                                                                
+  }  
+
+ .pile-view-content {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10dp;
+      text-align: center;
+  }                                                                                                                                                                  
+           

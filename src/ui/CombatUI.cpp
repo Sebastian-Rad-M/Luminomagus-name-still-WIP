@@ -159,21 +159,20 @@ void CombatListener::refreshUI() {
                     cards = &round.getExile().getCards();
                 }
                 
-                int cols = 4;
+                int cols = 3;
                 for (size_t i = 0; i < cards->size(); i++) {
                     int row = i / cols;
                     int col = i % cols;
-                    int x = col * 80;
-                    int y = row * 110;
+                    int x = col * 155;
+                    int y = row * 215;
                     std::string idStr = showSelection ? " id=\"select-card-" + std::to_string(i) + "\"" : "";
-                    html += "<div" + idStr + " style=\"position: absolute; left: " + std::to_string(x) + "px; top: " 
-                            + std::to_string(y) + "px; transform: scale(0.35); transform-origin: top left;\">";
+                    html += "<div" + idStr + " style=\"position: absolute; left: " + std::to_string(x) + "px; top: "
+                            + std::to_string(y) + "px; transform: scale(0.45); transform-origin: top left;\">";
                     html += UIHelpers::GenerateCardRML(cardTemplateRML, *(*cards)[i]);
                     html += "</div>";
                 }
                 container->SetInnerRML(html);
-                container->SetProperty("height", std::to_string(((cards->size() + cols - 1) / cols) * 110 + 200) + "px");
-
+                container->SetProperty("height", std::to_string(((cards->size() + cols - 1) / cols) * 215 + 50) + "px");
                 if (showSelection) {
                     for (size_t i = 0; i < cards->size(); i++) {
                         if (auto btn = combatDoc->GetElementById("select-card-" + std::to_string(i))) {
